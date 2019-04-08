@@ -1,0 +1,19 @@
+name: mask_text_input_formatter_example
+description: Mask Text Input Formatter Example
+version: 1.0.0
+author: Sergey Smurov
+homepage: https://github.com/siqwin/mask_text_input_formatter
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  mask_text_input_formatter:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
