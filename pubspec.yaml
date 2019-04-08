@@ -1,7 +1,7 @@
 name: mask_text_input_formatter
 description: Mask Text Input Formatter
 version: 1.0.0
-author: Sergey Smurov
+author: Sergey Smurov <sergey.smurov.dev@gmail.com>
 homepage: https://github.com/siqwin/mask_text_input_formatter
 
 environment:
