@@ -12,13 +12,13 @@ class MaskTextInputFormatter extends TextInputFormatter {
   String _resultTextMasked = "";
   bool _waitForNext = true;
 
-  MaskTextInputFormatter({ String mask = "+# (###) ###-##-##", Map<String, RegExp> filter}):
-        assert(mask != null),
+  MaskTextInputFormatter({String mask = "+# (###) ###-##-##", Map<String, RegExp> filter})
+      : assert(mask != null),
         assert(mask.isNotEmpty) {
-    updateMask(mask, filter: filter ?? { "#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]') });
+    updateMask(mask, filter: filter ?? {"#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]')});
   }
 
-  TextEditingValue updateMask(String mask, { Map<String, RegExp> filter }) {
+  TextEditingValue updateMask(String mask, {Map<String, RegExp> filter}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
@@ -58,7 +58,6 @@ class MaskTextInputFormatter extends TextInputFormatter {
   }
 
   TextEditingValue _formatUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-
     final selectionBefore = oldValue.selection;
 
     final String textBefore = oldValue.text;
@@ -76,32 +75,30 @@ class MaskTextInputFormatter extends TextInputFormatter {
     final replaceStart = startBefore - removed;
     final replaceLength = countBefore + removed;
 
-    int rangeStart = 0;
     int currentTotalText = _resultTextArray.length;
+    int selectionStart = 0;
+    int selectionLength = 0;
     for (var i = 0; i < replaceStart + replaceLength; i++) {
       if (_maskChars.contains(_mask[i]) && currentTotalText > 0) {
-        rangeStart += 1;
         currentTotalText -= 1;
+        if (i < replaceStart) {
+          selectionStart += 1;
+        }
+        if (i >= replaceStart) {
+          selectionLength += 1;
+        }
       }
-    }
-
-    int targetRangeStart = rangeStart - replaceLength;
-    int targetRangeLength = replaceLength;
-    if (targetRangeStart < 0) {
-      targetRangeLength += targetRangeStart;
-      targetRangeStart = 0;
     }
 
     final String replacementText = textAfter.substring(startAfter, endAfter);
-    int targetCursorPosition = rangeStart;
+    int targetCursorPosition = selectionStart;
     if (replacementText.isEmpty) {
-      _resultTextArray.removeRange(targetRangeStart, targetRangeStart + targetRangeLength);
-      targetCursorPosition -= targetRangeLength;
+      _resultTextArray.removeRange(selectionStart, selectionStart + selectionLength);
     } else {
-      if (targetRangeLength > 0) {
-        _resultTextArray.removeRange(targetRangeStart, targetRangeStart + targetRangeLength);
+      if (selectionLength > 0) {
+        _resultTextArray.removeRange(selectionStart, selectionStart + selectionLength);
       }
-      _insertToResultText(targetRangeStart, replacementText);
+      _insertToResultText(selectionStart, replacementText);
       targetCursorPosition += replacementText.length;
     }
 
@@ -109,6 +106,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
     int maskPos = 0;
     _resultTextMasked = "";
     int cursorPos = -1;
+    int nonMaskedCount = 0;
 
     while (maskPos < _mask.length) {
       final String curMaskChar = _mask[maskPos];
@@ -135,8 +133,9 @@ class MaskTextInputFormatter extends TextInputFormatter {
       if (isMaskChar && curTextInRange) {
         _resultTextMasked += curTextChar;
         if (curTextPos == targetCursorPosition && cursorPos == -1) {
-          cursorPos = maskPos;
+          cursorPos = maskPos - nonMaskedCount;
         }
+        nonMaskedCount = 0;
         curTextPos += 1;
       } else {
         if (curTextPos == targetCursorPosition && cursorPos == -1 && !curTextInRange) {
@@ -148,6 +147,8 @@ class MaskTextInputFormatter extends TextInputFormatter {
         } else {
           _resultTextMasked += _mask[maskPos];
         }
+
+        nonMaskedCount++;
       }
 
       maskPos += 1;
