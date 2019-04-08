@@ -2,11 +2,13 @@
 
 [![Version](https://img.shields.io/pub/v/mask_text_input_formatter.svg)](https://pub.dartlang.org/packages/mask_text_input_formatter) [![Build Status](https://travis-ci.com/siqwin/mask_text_input_formatter.svg?branch=master)](https://travis-ci.com/siqwin/mask_text_input_formatter)  [![codecov](https://codecov.io/gh/siqwin/mask_text_input_formatter/branch/master/graph/badge.svg)](https://codecov.io/gh/siqwin/mask_text_input_formatter) ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)
 
-Masked text input formatter for flutter.
+Masked text input formatter for flutter text fields
 
 ![logo](doc/flutter_logo.png)
 
 ## Example
+
+Check 'example' folder for code sample
 
 ![sample](doc/example.gif)
 
@@ -32,6 +34,20 @@ Set it to text field:
 
 ```dart
 TextField(inputFormatters: [maskFormatter])
+```
+
+## Get value
+
+Get masked text:
+
+```dart
+print(maskFormatter.getMaskedText()); // -> "+0 (123) 456-78-90"
+```
+
+Get unmasked text:
+
+```dart
+print(maskFormatter.getUnmaskedText()); // -> 01234567890
 ```
 
 ## Change the mask
