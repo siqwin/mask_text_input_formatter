@@ -12,7 +12,7 @@ Masked text input formatter for flutter.
 
 Follow install guide:
 
-https://pub.dartlang.org/packages/mask_text_input_formatter#-installing-tab
+https://pub.dartlang.org/packages/mask_text_input_formatter#-installing-tab-
 
 Import the library:
 
