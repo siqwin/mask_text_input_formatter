@@ -74,6 +74,18 @@ void main() {
     expect(maskTextInputFormatter.getUnmaskedText(), "014567890");
   });
 
+  test('Remove part 2', () {
+    final maskTextInputFormatter = MaskTextInputFormatter(mask: "(###) ###-##-##");
+    TextEditingValue currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "2555555", selection: TextSelection.collapsed(offset: 11)));
+    currentTextEditingValue = TextEditingValue(text: currentTextEditingValue.text, selection: TextSelection.collapsed(offset: 11));
+
+    currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: "(255) 555-", selection: TextSelection.collapsed(offset: 10)));
+    expect(currentTextEditingValue, TextEditingValue(text: "(255) 555", selection: TextSelection.collapsed(offset: 9)));
+
+    currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: "(255) 55", selection: TextSelection.collapsed(offset: 8)));
+    expect(currentTextEditingValue, TextEditingValue(text: "(255) 55", selection: TextSelection.collapsed(offset: 8)));
+  });
+
   test('Remove with mask part', () {
     final maskTextInputFormatter = MaskTextInputFormatter();
     TextEditingValue currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "01234567890", selection: TextSelection.collapsed(offset: 11)));
@@ -123,5 +135,17 @@ void main() {
     expect(maskTextInputFormatter.isFill(), true);
     expect(maskTextInputFormatter.getMaskedText(), "12/34-56/78");
     expect(maskTextInputFormatter.getUnmaskedText(), "12345678");
+  });
+
+  test('Paste full phone number', () {
+    final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##");
+    maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "+12345678901", selection: TextSelection.collapsed(offset: 12)));
+    expect(maskTextInputFormatter.getMaskedText(), "+1 (234) 567-89-01");
+  });
+
+  test('Paste full phone number with spec symbols', () {
+    final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##");
+    maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "+1 (234) 567-89-01", selection: TextSelection.collapsed(offset: 12)));
+    expect(maskTextInputFormatter.getMaskedText(), "+1 (234) 567-89-01");
   });
 }

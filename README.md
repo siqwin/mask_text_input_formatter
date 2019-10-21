@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/pub/v/mask_text_input_formatter.svg)](https://pub.dartlang.org/packages/mask_text_input_formatter) [![Build Status](https://travis-ci.com/siqwin/mask_text_input_formatter.svg?branch=master)](https://travis-ci.com/siqwin/mask_text_input_formatter)  [![codecov](https://codecov.io/gh/siqwin/mask_text_input_formatter/branch/master/graph/badge.svg)](https://codecov.io/gh/siqwin/mask_text_input_formatter) ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)
 
-Masked text input formatter for flutter text fields
+The package provides TextInputFormatter for TextField and TextFormField which format the input by a given mask.
 
 ![logo](doc/flutter_logo.png)
 

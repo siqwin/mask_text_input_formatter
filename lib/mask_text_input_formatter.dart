@@ -42,22 +42,23 @@ class MaskTextInputFormatter extends TextInputFormatter {
     return _resultTextArray.length == _maskLength;
   }
 
+  TextEditingValue lastResValue;
+  TextEditingValue lastOldValue;
+  TextEditingValue lastNewValue;
+
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (!_waitForNext) {
-      return oldValue;
-    } else {
-      if (WidgetsBinding.instance != null) {
-        _waitForNext = false;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _waitForNext = true;
-        });
-      }
-      return _formatUpdate(oldValue, newValue);
+    if (lastResValue == oldValue && newValue == lastNewValue) {
+      return lastResValue;
     }
+    lastOldValue = oldValue;
+    lastNewValue = newValue;
+    lastResValue = _formatUpdate(oldValue, newValue);
+    return lastResValue;
   }
 
   TextEditingValue _formatUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+
     final selectionBefore = oldValue.selection;
 
     final String textBefore = oldValue.text;
@@ -74,6 +75,8 @@ class MaskTextInputFormatter extends TextInputFormatter {
 
     final replaceStart = startBefore - removed;
     final replaceLength = countBefore + removed;
+
+    final beforeResultTextLength =_resultTextArray.length;
 
     int currentTotalText = _resultTextArray.length;
     int selectionStart = 0;
@@ -100,6 +103,16 @@ class MaskTextInputFormatter extends TextInputFormatter {
       }
       _insertToResultText(selectionStart, replacementText);
       targetCursorPosition += replacementText.length;
+    }
+
+    if (beforeResultTextLength == 0) {
+      for (var i = 0; i < _mask.length; i++) {
+        if (_maskChars.contains(_mask[i]) || _resultTextArray.length == 0) {
+          break;
+        } else if (_mask[i] == _resultTextArray[0]) {
+          _resultTextArray.removeAt(0);
+        }
+      }
     }
 
     int curTextPos = 0;
@@ -154,11 +167,17 @@ class MaskTextInputFormatter extends TextInputFormatter {
       maskPos += 1;
     }
 
+    if (nonMaskedCount > 0) {
+      _resultTextMasked = _resultTextMasked.substring(0, _resultTextMasked.length - nonMaskedCount);
+      cursorPos -= nonMaskedCount;
+    }
+
     if (_resultTextArray.length > _maskLength) {
       _resultTextArray.removeRange(_maskLength, _resultTextArray.length);
     }
 
-    final int finalCursorPosition = cursorPos == -1 ? _resultTextMasked.length : cursorPos;
+    int finalCursorPosition = cursorPos == -1 ? _resultTextMasked.length : cursorPos;
+
     return TextEditingValue(text: _resultTextMasked, selection: TextSelection(baseOffset: finalCursorPosition, extentOffset: finalCursorPosition));
   }
 
@@ -182,3 +201,4 @@ class MaskTextInputFormatter extends TextInputFormatter {
     _maskChars = _maskFilter.keys.toList(growable: false);
   }
 }
+
