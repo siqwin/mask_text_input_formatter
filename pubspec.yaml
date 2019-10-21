@@ -1,6 +1,6 @@
 name: mask_text_input_formatter
 description: Masked text input formatter for flutter text fields
-version: 1.0.3
+version: 1.0.4
 author: Sergey Smurov <sergey.smurov.dev@gmail.com>
 homepage: https://github.com/siqwin/mask_text_input_formatter
 
