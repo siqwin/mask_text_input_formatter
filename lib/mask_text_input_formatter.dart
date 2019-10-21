@@ -105,7 +105,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
       targetCursorPosition += replacementText.length;
     }
 
-    if (beforeResultTextLength == 0) {
+    if (beforeResultTextLength == 0 && _resultTextArray.length  > 1) {
       for (var i = 0; i < _mask.length; i++) {
         if (_maskChars.contains(_mask[i]) || _resultTextArray.length == 0) {
           break;
