@@ -10,7 +10,6 @@ class MaskTextInputFormatter extends TextInputFormatter {
   int _maskLength;
   final _resultTextArray = <String>[];
   String _resultTextMasked = "";
-  bool _waitForNext = true;
 
   MaskTextInputFormatter({String mask = "+# (###) ###-##-##", Map<String, RegExp> filter})
       : assert(mask != null),
