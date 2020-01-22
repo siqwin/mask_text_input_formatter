@@ -177,7 +177,15 @@ class MaskTextInputFormatter extends TextInputFormatter {
 
     int finalCursorPosition = cursorPos == -1 ? _resultTextMasked.length : cursorPos;
 
-    return TextEditingValue(text: _resultTextMasked, selection: TextSelection(baseOffset: finalCursorPosition, extentOffset: finalCursorPosition));
+    return TextEditingValue(
+      text: _resultTextMasked,
+      selection: TextSelection(
+        baseOffset: finalCursorPosition,
+        extentOffset: finalCursorPosition,
+        affinity: newValue.selection.affinity,
+        isDirectional: newValue.selection.isDirectional
+      )
+    );
   }
 
   void _insertToResultText(int start, String substring) {

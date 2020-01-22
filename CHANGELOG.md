@@ -1,3 +1,7 @@
+## [1.0.6]
+
+Fix bug
+
 ## [1.0.5]
 
 Minor changes
