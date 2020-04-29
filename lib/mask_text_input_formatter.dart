@@ -1,5 +1,8 @@
 import 'package:flutter/services.dart';
 
+///
+///
+///
 class MaskTextInputFormatter extends TextInputFormatter {
   String _mask;
   List<String> _maskChars;
@@ -9,6 +12,13 @@ class MaskTextInputFormatter extends TextInputFormatter {
   final _resultTextArray = <String>[];
   String _resultTextMasked = "";
 
+  TextEditingValue lastResValue;
+  TextEditingValue lastOldValue;
+  TextEditingValue lastNewValue;
+
+  ///
+  ///
+  ///
   MaskTextInputFormatter({
     String mask,
     Map<String, RegExp> filter,
@@ -23,6 +33,9 @@ class MaskTextInputFormatter extends TextInputFormatter {
     );
   }
 
+  ///
+  ///
+  ///
   TextEditingValue updateMask({
     String mask,
     Map<String, RegExp> filter,
@@ -49,22 +62,29 @@ class MaskTextInputFormatter extends TextInputFormatter {
     );
   }
 
-  String getMaskedText() {
-    return _resultTextMasked;
-  }
+  ///
+  ///
+  ///
+  String getMaskedText() => _resultTextMasked;
 
-  String getUnmaskedText() {
-    return _resultTextArray.join();
-  }
+  ///
+  ///
+  ///
+  String getUnmaskedText() => _resultTextArray.join();
 
-  bool isFill() {
-    return _resultTextArray.length == _maskLength;
-  }
+  ///
+  ///
+  ///
+  bool isFill() => _resultTextArray.length == _maskLength;
 
-  TextEditingValue lastResValue;
-  TextEditingValue lastOldValue;
-  TextEditingValue lastNewValue;
+  ///
+  ///
+  ///
+  String getMask() => _mask;
 
+  ///
+  ///
+  ///
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
@@ -79,9 +99,14 @@ class MaskTextInputFormatter extends TextInputFormatter {
     return lastResValue;
   }
 
+  ///
+  ///
+  ///
   TextEditingValue _formatUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (mask == null) return newValue;
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (_mask == null) return newValue;
 
     final selectionBefore = oldValue.selection;
 
@@ -227,12 +252,18 @@ class MaskTextInputFormatter extends TextInputFormatter {
     );
   }
 
+  ///
+  ///
+  ///
   void _insertToResultText(int start, String substring) {
     for (var i = 0; i < substring.length; i++) {
       _resultTextArray.insert(start + i, substring[i]);
     }
   }
 
+  ///
+  ///
+  ///
   void _calcMaskLength() {
     _maskLength = 0;
     for (int i = 0; i < _mask.length; i++) {
@@ -242,10 +273,11 @@ class MaskTextInputFormatter extends TextInputFormatter {
     }
   }
 
+  ///
+  ///
+  ///
   void _updateFilter(Map<String, RegExp> filter) {
     _maskFilter = filter;
     _maskChars = _maskFilter.keys.toList(growable: false);
   }
-
-  String get mask => _mask;
 }
