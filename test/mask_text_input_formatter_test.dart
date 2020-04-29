@@ -130,7 +130,7 @@ void main() {
     expect(maskTextInputFormatter.getMaskedText(), "1234-5678");
     expect(maskTextInputFormatter.getUnmaskedText(), "12345678");
 
-    currentTextEditingValue = maskTextInputFormatter.updateMask(secondMask);
+    currentTextEditingValue = maskTextInputFormatter.updateMask(mask: secondMask);
     expect(currentTextEditingValue, TextEditingValue(text: "12/34-56/78", selection: TextSelection.collapsed(offset: 11)));
     expect(maskTextInputFormatter.isFill(), true);
     expect(maskTextInputFormatter.getMaskedText(), "12/34-56/78");

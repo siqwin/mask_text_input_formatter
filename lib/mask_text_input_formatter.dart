@@ -10,10 +10,9 @@ class MaskTextInputFormatter extends TextInputFormatter {
   String _resultTextMasked = "";
 
   MaskTextInputFormatter({
-    String mask = "+# (###) ###-##-##",
+    String mask,
     Map<String, RegExp> filter,
-  })  : assert(mask != null),
-        assert(mask.isNotEmpty) {
+  }) {
     updateMask(
       mask: mask,
       filter: filter ??
@@ -82,6 +81,8 @@ class MaskTextInputFormatter extends TextInputFormatter {
 
   TextEditingValue _formatUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
+    if (mask == null) return newValue;
+
     final selectionBefore = oldValue.selection;
 
     final String textBefore = oldValue.text;
