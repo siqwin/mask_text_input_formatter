@@ -39,15 +39,13 @@ class MaskTextInputFormatter extends TextInputFormatter {
   TextEditingValue updateMask({
     String mask,
     Map<String, RegExp> filter,
+    bool clear = false,
   }) {
-    if (mask != null) {
-      _mask = mask;
-    }
-    if (filter != null) {
-      _updateFilter(filter);
-    }
+    _mask = mask;
+    if (_mask == null) clear = true;
+    if (filter != null) _updateFilter(filter);
     _calcMaskLength();
-    final String unmaskedText = getUnmaskedText();
+    final String unmaskedText = clear ? '' : getUnmaskedText();
     _resultTextArray.clear();
     _resultTextMasked = "";
     return _formatUpdate(
@@ -266,9 +264,11 @@ class MaskTextInputFormatter extends TextInputFormatter {
   ///
   void _calcMaskLength() {
     _maskLength = 0;
-    for (int i = 0; i < _mask.length; i++) {
-      if (_maskChars.contains(_mask[i])) {
-        _maskLength++;
+    if (_mask != null) {
+      for (int i = 0; i < _mask.length; i++) {
+        if (_maskChars.contains(_mask[i])) {
+          _maskLength++;
+        }
       }
     }
   }
