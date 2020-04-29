@@ -15,7 +15,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
   })  : assert(mask != null),
         assert(mask.isNotEmpty) {
     updateMask(
-      mask,
+      mask: mask,
       filter: filter ??
           {
             "#": RegExp(r'[0-9]'),
@@ -24,11 +24,13 @@ class MaskTextInputFormatter extends TextInputFormatter {
     );
   }
 
-  TextEditingValue updateMask(
-    String mask, {
+  TextEditingValue updateMask({
+    String mask,
     Map<String, RegExp> filter,
   }) {
-    _mask = mask;
+    if (mask != null) {
+      _mask = mask;
+    }
     if (filter != null) {
       _updateFilter(filter);
     }
