@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class MaskTextInputFormatter extends TextInputFormatter {
-
   String _mask;
   List<String> _maskChars;
   Map<String, RegExp> _maskFilter;
@@ -11,13 +9,25 @@ class MaskTextInputFormatter extends TextInputFormatter {
   final _resultTextArray = <String>[];
   String _resultTextMasked = "";
 
-  MaskTextInputFormatter({String mask = "+# (###) ###-##-##", Map<String, RegExp> filter})
-      : assert(mask != null),
+  MaskTextInputFormatter({
+    String mask = "+# (###) ###-##-##",
+    Map<String, RegExp> filter,
+  })  : assert(mask != null),
         assert(mask.isNotEmpty) {
-    updateMask(mask, filter: filter ?? {"#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]')});
+    updateMask(
+      mask,
+      filter: filter ??
+          {
+            "#": RegExp(r'[0-9]'),
+            "A": RegExp(r'[^0-9]'),
+          },
+    );
   }
 
-  TextEditingValue updateMask(String mask, {Map<String, RegExp> filter}) {
+  TextEditingValue updateMask(
+    String mask, {
+    Map<String, RegExp> filter,
+  }) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
@@ -26,7 +36,16 @@ class MaskTextInputFormatter extends TextInputFormatter {
     final String unmaskedText = getUnmaskedText();
     _resultTextArray.clear();
     _resultTextMasked = "";
-    return _formatUpdate(TextEditingValue(), TextEditingValue(text: unmaskedText, selection: TextSelection(baseOffset: unmaskedText.length, extentOffset: unmaskedText.length)));
+    return _formatUpdate(
+      TextEditingValue(),
+      TextEditingValue(
+        text: unmaskedText,
+        selection: TextSelection(
+          baseOffset: unmaskedText.length,
+          extentOffset: unmaskedText.length,
+        ),
+      ),
+    );
   }
 
   String getMaskedText() {
@@ -46,7 +65,10 @@ class MaskTextInputFormatter extends TextInputFormatter {
   TextEditingValue lastNewValue;
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     if (lastResValue == oldValue && newValue == lastNewValue) {
       return lastResValue;
     }
@@ -56,15 +78,17 @@ class MaskTextInputFormatter extends TextInputFormatter {
     return lastResValue;
   }
 
-  TextEditingValue _formatUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-
+  TextEditingValue _formatUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     final selectionBefore = oldValue.selection;
 
     final String textBefore = oldValue.text;
     final String textAfter = newValue.text;
 
     final startBefore = selectionBefore.start == -1 ? 0 : selectionBefore.start;
-    final countBefore = selectionBefore.start == -1 || selectionBefore.end == -1 ? 0 : selectionBefore.end - selectionBefore.start;
+    final countBefore = selectionBefore.start == -1 || selectionBefore.end == -1
+        ? 0
+        : selectionBefore.end - selectionBefore.start;
 
     final after = textAfter.length - (textBefore.length - countBefore);
     final removed = after < 0 ? after.abs() : 0;
@@ -75,7 +99,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
     final replaceStart = startBefore - removed;
     final replaceLength = countBefore + removed;
 
-    final beforeResultTextLength =_resultTextArray.length;
+    final beforeResultTextLength = _resultTextArray.length;
 
     int currentTotalText = _resultTextArray.length;
     int selectionStart = 0;
@@ -95,16 +119,22 @@ class MaskTextInputFormatter extends TextInputFormatter {
     final String replacementText = textAfter.substring(startAfter, endAfter);
     int targetCursorPosition = selectionStart;
     if (replacementText.isEmpty) {
-      _resultTextArray.removeRange(selectionStart, selectionStart + selectionLength);
+      _resultTextArray.removeRange(
+        selectionStart,
+        selectionStart + selectionLength,
+      );
     } else {
       if (selectionLength > 0) {
-        _resultTextArray.removeRange(selectionStart, selectionStart + selectionLength);
+        _resultTextArray.removeRange(
+          selectionStart,
+          selectionStart + selectionLength,
+        );
       }
       _insertToResultText(selectionStart, replacementText);
       targetCursorPosition += replacementText.length;
     }
 
-    if (beforeResultTextLength == 0 && _resultTextArray.length  > 1) {
+    if (beforeResultTextLength == 0 && _resultTextArray.length > 1) {
       for (var i = 0; i < _mask.length; i++) {
         if (_maskChars.contains(_mask[i]) || _resultTextArray.length == 0) {
           break;
@@ -150,7 +180,9 @@ class MaskTextInputFormatter extends TextInputFormatter {
         nonMaskedCount = 0;
         curTextPos += 1;
       } else {
-        if (curTextPos == targetCursorPosition && cursorPos == -1 && !curTextInRange) {
+        if (curTextPos == targetCursorPosition &&
+            cursorPos == -1 &&
+            !curTextInRange) {
           cursorPos = maskPos;
         }
 
@@ -167,7 +199,10 @@ class MaskTextInputFormatter extends TextInputFormatter {
     }
 
     if (nonMaskedCount > 0) {
-      _resultTextMasked = _resultTextMasked.substring(0, _resultTextMasked.length - nonMaskedCount);
+      _resultTextMasked = _resultTextMasked.substring(
+        0,
+        _resultTextMasked.length - nonMaskedCount,
+      );
       cursorPos -= nonMaskedCount;
     }
 
@@ -175,7 +210,8 @@ class MaskTextInputFormatter extends TextInputFormatter {
       _resultTextArray.removeRange(_maskLength, _resultTextArray.length);
     }
 
-    int finalCursorPosition = cursorPos == -1 ? _resultTextMasked.length : cursorPos;
+    int finalCursorPosition =
+        cursorPos == -1 ? _resultTextMasked.length : cursorPos;
 
     return TextEditingValue(
       text: _resultTextMasked,
@@ -183,8 +219,8 @@ class MaskTextInputFormatter extends TextInputFormatter {
         baseOffset: finalCursorPosition,
         extentOffset: finalCursorPosition,
         affinity: newValue.selection.affinity,
-        isDirectional: newValue.selection.isDirectional
-      )
+        isDirectional: newValue.selection.isDirectional,
+      ),
     );
   }
 
@@ -207,5 +243,6 @@ class MaskTextInputFormatter extends TextInputFormatter {
     _maskFilter = filter;
     _maskChars = _maskFilter.keys.toList(growable: false);
   }
-}
 
+  String get mask => _mask;
+}
