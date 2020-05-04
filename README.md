@@ -14,23 +14,21 @@ Check 'example' folder for code sample
 
 ## Usage
 
-Follow install guide:
+1. Follow the install [guide](https://pub.dartlang.org/packages/mask_text_input_formatter#-installing-tab-)
 
-https://pub.dartlang.org/packages/mask_text_input_formatter#-installing-tab-
-
-Import the library:
+2. Import the library:
 
 ```dart
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 ```
 
-Create mask formatter:
+3. Create mask formatter:
 
 ```dart
 var maskFormatter = new MaskTextInputFormatter(mask: '+# (###) ###-##-##', filter: { "#": RegExp(r'[0-9]') });
 ```
 
-Set it to text field:
+4. Set it to text field:
 
 ```dart
 TextField(inputFormatters: [maskFormatter])
