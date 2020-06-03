@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class MaskTextFormat {
+  String _mask;
+  Map<String, RegExp> _maskFilter;
+
+  MaskTextFormat({String mask, Map<String, RegExp> filter})
+      : assert(mask != null),
+        assert(mask.isNotEmpty),
+        assert(filter != null),
+        _mask = mask,
+        _maskFilter = filter;
+
+  String mask(String text) {
+    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, text: text)
+        .getMaskedText();
+  }
+
+  String unmask(String text) {
+    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, text: text)
+        .getUnmaskedText();
+  }
+}
+
 class MaskTextInputFormatter extends TextInputFormatter {
   String _mask;
   List<String> _maskChars;
