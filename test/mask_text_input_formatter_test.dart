@@ -74,6 +74,16 @@ void main() {
     expect(maskTextInputFormatter.getUnmaskedText(), "014567890");
   });
 
+
+  test('Remove all', () {
+    final maskTextInputFormatter = MaskTextInputFormatter();
+    TextEditingValue currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "01234567890", selection: TextSelection.collapsed(offset: 11)));
+    currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue.empty);
+    expect(maskTextInputFormatter.isFill(), false);
+    expect(maskTextInputFormatter.getMaskedText(), "");
+    expect(maskTextInputFormatter.getUnmaskedText(), "");
+  });
+
   test('Remove part 2', () {
     final maskTextInputFormatter = MaskTextInputFormatter(mask: "(###) ###-##-##");
     TextEditingValue currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "2555555", selection: TextSelection.collapsed(offset: 11)));

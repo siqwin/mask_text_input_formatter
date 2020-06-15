@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,12 +13,17 @@ class MaskTextInputFormatter extends TextInputFormatter {
   final _resultTextArray = <String>[];
   String _resultTextMasked = "";
 
+  /// Create the [mask] formatter for TextField
+  ///
+  /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
+  /// By default `#` match to the number and `A` to the letter
   MaskTextInputFormatter({String mask = "+# (###) ###-##-##", Map<String, RegExp> filter})
       : assert(mask != null),
         assert(mask.isNotEmpty) {
     updateMask(mask, filter: filter ?? {"#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]')});
   }
 
+  /// Change the mask
   TextEditingValue updateMask(String mask, {Map<String, RegExp> filter}) {
     _mask = mask;
     if (filter != null) {
@@ -29,31 +36,32 @@ class MaskTextInputFormatter extends TextInputFormatter {
     return _formatUpdate(TextEditingValue(), TextEditingValue(text: unmaskedText, selection: TextSelection(baseOffset: unmaskedText.length, extentOffset: unmaskedText.length)));
   }
 
+  /// Get masked text, e.g. "+0 (123) 456-78-90"
   String getMaskedText() {
     return _resultTextMasked;
   }
 
+  /// Get unmasked text, e.g. "01234567890"
   String getUnmaskedText() {
     return _resultTextArray.join();
   }
 
+  /// Check if target mask is filled
   bool isFill() {
     return _resultTextArray.length == _maskLength;
   }
 
-  TextEditingValue lastResValue;
-  TextEditingValue lastOldValue;
-  TextEditingValue lastNewValue;
+  TextEditingValue _lastResValue;
+  TextEditingValue _lastNewValue;
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (lastResValue == oldValue && newValue == lastNewValue) {
-      return lastResValue;
+    if (_lastResValue == oldValue && newValue == _lastNewValue) {
+      return _lastResValue;
     }
-    lastOldValue = oldValue;
-    lastNewValue = newValue;
-    lastResValue = _formatUpdate(oldValue, newValue);
-    return lastResValue;
+    _lastNewValue = newValue;
+    _lastResValue = _formatUpdate(oldValue, newValue);
+    return _lastResValue;
   }
 
   TextEditingValue _formatUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
@@ -69,10 +77,10 @@ class MaskTextInputFormatter extends TextInputFormatter {
     final after = textAfter.length - (textBefore.length - countBefore);
     final removed = after < 0 ? after.abs() : 0;
 
-    final startAfter = startBefore + (after < 0 ? after : 0);
-    final endAfter = startAfter + (after > 0 ? after : 0);
+    final startAfter = max(0, startBefore + (after < 0 ? after : 0));
+    final endAfter = max(0, startAfter + (after > 0 ? after : 0));
 
-    final replaceStart = startBefore - removed;
+    final replaceStart = max(0, startBefore - removed);
     final replaceLength = countBefore + removed;
 
     final beforeResultTextLength =_resultTextArray.length;
