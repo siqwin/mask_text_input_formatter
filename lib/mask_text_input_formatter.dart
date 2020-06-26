@@ -63,6 +63,11 @@ class MaskTextInputFormatter extends TextInputFormatter {
     _lastResValue = _formatUpdate(oldValue, newValue);
     return _lastResValue;
   }
+  
+  /// Clear the text stored in the formatter
+  void clear() {
+    _resultTextArray.clear();
+  }
 
   TextEditingValue _formatUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
 
