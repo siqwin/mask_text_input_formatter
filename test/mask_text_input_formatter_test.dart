@@ -158,4 +158,13 @@ void main() {
     maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "+1 (234) 567-89-01", selection: TextSelection.collapsed(offset: 12)));
     expect(maskTextInputFormatter.getMaskedText(), "+1 (234) 567-89-01");
   });
+  
+  test('Clear text', () {
+    final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##");
+    maskTextInputFormatter.formatEditUpdate(TextEditingValue(), TextEditingValue(text: "+1 (234) 567-89-01", selection: TextSelection.collapsed(offset: 12)));
+    maskTextInputFormatter.clear();
+    expect(maskTextInputFormatter.isFill(), false);
+    expect(maskTextInputFormatter.getMaskedText(), "");
+    expect(maskTextInputFormatter.getUnmaskedText(), "");
+  });
 }
