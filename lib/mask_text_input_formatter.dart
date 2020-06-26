@@ -31,8 +31,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
     }
     _calcMaskLength();
     final String unmaskedText = getUnmaskedText();
-    _resultTextArray.clear();
-    _resultTextMasked = "";
+    clear();
     return _formatUpdate(TextEditingValue(), TextEditingValue(text: unmaskedText, selection: TextSelection(baseOffset: unmaskedText.length, extentOffset: unmaskedText.length)));
   }
 
@@ -66,6 +65,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
   
   /// Clear the text stored in the formatter
   void clear() {
+    _resultTextMasked = "";
     _resultTextArray.clear();
   }
 
