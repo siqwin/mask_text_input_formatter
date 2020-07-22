@@ -88,7 +88,7 @@ class MaskTextInputFormatter extends TextInputFormatter {
     int currentTotalText = _resultTextArray.length;
     int selectionStart = 0;
     int selectionLength = 0;
-    for (var i = 0; i < replaceStart + replaceLength; i++) {
+    for (var i = 0; i < min(replaceStart + replaceLength, _mask.length); i++) {
       if (_maskChars.contains(_mask[i]) && currentTotalText > 0) {
         currentTotalText -= 1;
         if (i < replaceStart) {
