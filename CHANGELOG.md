@@ -1,3 +1,16 @@
+## [1.1.0]
+
+Added: clear function
+Added: function to get a current mask
+Added: functions to mask/unmask some text
+Updated example app
+Fixed some bugs
+
+## [1.0.7]
+
+Fix clear text bug + test
+Some docs added
+
 ## [1.0.6]
 
 Fix bug

@@ -4,13 +4,13 @@
 
 The package provides TextInputFormatter for TextField and TextFormField which format the input by a given mask.
 
-![logo](doc/flutter_logo.png)
+![logo](https://user-images.githubusercontent.com/49272216/91583922-88393380-e95a-11ea-85d0-07e1bef1a4c1.png)
 
 ## Example
 
 Check 'example' folder for code sample
 
-![sample](doc/example.gif)
+![example](https://user-images.githubusercontent.com/49272216/91583806-5de77600-e95a-11ea-8b13-7b2b85883513.gif)
 
 ## Usage
 
@@ -58,5 +58,5 @@ var maskFormatter = new MaskTextInputFormatter(mask: '####-####', filter: { "#":
 
 TextField(controller: textEditingController, inputFormatters: [maskFormatter])  // -> "1234-5678"
 
-textEditingController.value = maskFormatter.updateMask("##-##-##-##"); // -> "12-34-56-78"
+textEditingController.value = maskFormatter.updateMask(mask: "##-##-##-##"); // -> "12-34-56-78"
 ```
