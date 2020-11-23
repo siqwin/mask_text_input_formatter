@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 void main() => runApp(MyApp());
@@ -105,7 +106,7 @@ class _ExamplePageState extends State<ExamplePage> {
             inputFormatters: [const UpperCaseTextFormatter(), textInputFormatter],
             autocorrect: false,
             keyboardType: TextInputType.phone,
-            autovalidate: true,
+            autovalidateMode: AutovalidateMode.always,
             validator: validator,
             decoration: InputDecoration(
               hintText: hint,

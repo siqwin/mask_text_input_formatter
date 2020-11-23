@@ -2,6 +2,7 @@ name: mask_text_input_formatter_example
 description: Mask Text Input Formatter Example
 version: 1.0.0
 author: Sergey Smurov
+publish_to: none
 homepage: https://github.com/siqwin/mask_text_input_formatter
 
 environment:
