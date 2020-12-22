@@ -131,10 +131,7 @@ class _ExamplePageState extends State<ExamplePage> {
                 child: InkWell(
                   borderRadius: const BorderRadius.all(Radius.circular(24)),
                   child: const Icon(Icons.clear, color: Colors.grey, size: 24),
-                  onTap: () {
-                    textEditingController.clear();
-                    textInputFormatter.clear();
-                  }
+                  onTap: () => textEditingController.clear()
                 ),
               )
             ),
