@@ -1,4 +1,9 @@
+## [2.0.0-nullsafety.1]
+
+Fix some bugs
+
 ## [2.0.0-nullsafety.0]
+
 Migrate to null safety
 
 ## [1.1.0]

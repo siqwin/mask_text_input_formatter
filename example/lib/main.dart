@@ -117,7 +117,7 @@ class _ExamplePageState extends State<ExamplePage> {
               enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
               errorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
               border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.green)),
-              errorMaxLines: 0
+              errorMaxLines: 1
             )
           ),
           Positioned(

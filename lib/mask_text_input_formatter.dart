@@ -104,8 +104,10 @@ class MaskTextInputFormatter implements TextInputFormatter {
     final String afterText = newValue.text;
 
     final TextSelection beforeSelection = oldValue.selection;
-    final int beforeSelectionStart = beforeSelection.isValid ? beforeSelection.start : 0;
-    final int beforeSelectionLength = beforeSelection.isValid ? beforeSelection.end - beforeSelection.start : 0;
+    final TextSelection afterSelection = newValue.selection;
+
+    final int beforeSelectionStart = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.start : 0 : 0;
+    final int beforeSelectionLength = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.end - beforeSelection.start : 0 : oldValue.text.length;
 
     final int lengthDifference = afterText.length - (beforeText.length - beforeSelectionLength);
     final int lengthRemoved = lengthDifference < 0 ? lengthDifference.abs() : 0;
