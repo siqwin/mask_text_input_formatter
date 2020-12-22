@@ -1,10 +1,10 @@
 name: mask_text_input_formatter
 description: The package provides TextInputFormatter for TextField and TextFormField which format the input by a given mask.
-version: 2.0.0-nullsafety.1
+version: 1.2.0
 homepage: https://github.com/siqwin/mask_text_input_formatter
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:

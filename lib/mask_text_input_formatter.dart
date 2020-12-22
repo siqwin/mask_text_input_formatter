@@ -5,25 +5,25 @@ import 'package:flutter/services.dart';
 
 class MaskTextInputFormatter implements TextInputFormatter {
 
-  String? _mask;
+  String _mask;
   List<String> _maskChars = [];
-  Map<String, RegExp>? _maskFilter;
+  Map<String, RegExp> _maskFilter;
 
   int _maskLength = 0;
   final _TextMatcher _resultTextArray = _TextMatcher();
   String _resultTextMasked = "";
 
-  TextEditingValue? _lastResValue;
-  TextEditingValue? _lastNewValue;
+  TextEditingValue _lastResValue;
+  TextEditingValue _lastNewValue;
 
   /// Create the [mask] formatter for TextField
   ///
   /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
   /// By default `#` match to the number and `A` to the letter
   MaskTextInputFormatter({
-    String? mask,
-    Map<String, RegExp>? filter,
-    String? initialText
+    String mask,
+    Map<String, RegExp> filter,
+    String initialText
   }) {
     updateMask(mask: mask, filter: filter ?? {"#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]')});
     if (initialText != null) {
@@ -32,7 +32,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
   }
 
   /// Change the mask
-  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter}) {
+  TextEditingValue updateMask({ String mask, Map<String, RegExp> filter}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
@@ -44,7 +44,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
   }
 
   /// Get current mask
-  String? getMask() {
+  String getMask() {
     return _mask;
   }
 
@@ -171,11 +171,11 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
       bool curTextInRange = curTextPos < _resultTextArray.length;
 
-      String? curTextChar;
+      String curTextChar;
       if (isMaskChar && curTextInRange) {
         while (curTextChar == null && curTextInRange) {
           final String potentialTextChar = _resultTextArray[curTextPos];
-          if (_maskFilter?[curMaskChar]?.hasMatch(potentialTextChar) == true) {
+          if (_maskFilter != null && _maskFilter[curMaskChar]?.hasMatch(potentialTextChar) == true) {
             curTextChar = potentialTextChar;
           } else {
             _resultTextArray.removeAt(curTextPos);
@@ -247,7 +247,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
   void _updateFilter(Map<String, RegExp> filter) {
     _maskFilter = filter;
-    _maskChars = _maskFilter?.keys.toList(growable: false) ?? [];
+    _maskChars = _maskFilter?.keys?.toList(growable: false) ?? [];
   }
 }
 

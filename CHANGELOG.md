@@ -1,4 +1,4 @@
-## [2.0.0-nullsafety.1]
+## [1.2.0] / [2.0.0-nullsafety.1]
 
 Fix some bugs
 
