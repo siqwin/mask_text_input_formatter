@@ -192,6 +192,16 @@ void main() {
       expect(maskTextInputFormatter.getMaskedText(), "");
     });
 
+    test('Clear - 2', () {
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "###-##-##");
+      maskTextInputFormatter.formatEditUpdate(const TextEditingValue(), const TextEditingValue(text: "567-89-01", selection: TextSelection.collapsed(offset: 7)));
+      expect(maskTextInputFormatter.getMaskedText(), "567-89-01");
+      expect(maskTextInputFormatter.getUnmaskedText(), "5678901");
+      maskTextInputFormatter.formatEditUpdate(const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)), const TextEditingValue(text: "5", selection: TextSelection.collapsed(offset: 1)));
+      expect(maskTextInputFormatter.getMaskedText(), "5");
+      expect(maskTextInputFormatter.getUnmaskedText(), "5");
+    });
+
     test('Format text', () {
       const String phone = "2345678901";
       const String mask = "+1 (###) ###-##-##";
@@ -225,6 +235,5 @@ void main() {
     });
 
   });
-
 
 }

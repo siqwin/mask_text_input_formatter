@@ -1,3 +1,7 @@
+## [1.2.1]
+
+Fix bug  
+
 ## [1.2.0] / [2.0.0-nullsafety.1]
 
 Fix some bugs

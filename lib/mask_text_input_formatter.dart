@@ -87,6 +87,9 @@ class MaskTextInputFormatter implements TextInputFormatter {
     if (_lastResValue == oldValue && newValue == _lastNewValue) {
       return oldValue;
     }
+    if (oldValue.text.isEmpty) {
+      _resultTextArray.clear();
+    }
     _lastNewValue = newValue;
     return _lastResValue = _format(oldValue, newValue);
   }
