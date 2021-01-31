@@ -5,25 +5,25 @@ import 'package:flutter/services.dart';
 
 class MaskTextInputFormatter implements TextInputFormatter {
 
-  String _mask;
+  String? _mask;
   List<String> _maskChars = [];
-  Map<String, RegExp> _maskFilter;
+  Map<String, RegExp>? _maskFilter;
 
   int _maskLength = 0;
   final _TextMatcher _resultTextArray = _TextMatcher();
   String _resultTextMasked = "";
 
-  TextEditingValue _lastResValue;
-  TextEditingValue _lastNewValue;
+  TextEditingValue? _lastResValue;
+  TextEditingValue? _lastNewValue;
 
   /// Create the [mask] formatter for TextField
   ///
   /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
   /// By default `#` match to the number and `A` to the letter
   MaskTextInputFormatter({
-    String mask,
-    Map<String, RegExp> filter,
-    String initialText
+    String? mask,
+    Map<String, RegExp>? filter,
+    String? initialText
   }) {
     updateMask(mask: mask, filter: filter ?? {"#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]')});
     if (initialText != null) {
@@ -32,7 +32,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
   }
 
   /// Change the mask
-  TextEditingValue updateMask({ String mask, Map<String, RegExp> filter}) {
+  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
@@ -44,7 +44,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
   }
 
   /// Get current mask
-  String getMask() {
+  String? getMask() {
     return _mask;
   }
 
@@ -119,7 +119,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
     final int afterChangeStart = max(0, beforeSelectionStart - lengthRemoved);
     final int afterChangeEnd = max(0, afterChangeStart + lengthAdded);
 
-    //print(beforeSelectionStart);
     final int beforeReplaceStart = max(0, beforeSelectionStart);
     final int beforeReplaceLength = beforeSelectionLength + lengthRemoved;
 
@@ -128,6 +127,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
     int currentResultTextLength = _resultTextArray.length;
     int currentResultSelectionStart = 0;
     int currentResultSelectionLength = 0;
+
     for (var i = 0; i < min(beforeReplaceStart + beforeReplaceLength, mask.length); i++) {
       if (_maskChars.contains(mask[i]) && currentResultTextLength > 0) {
         currentResultTextLength -= 1;
@@ -143,9 +143,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
     final String replacementText = afterText.substring(afterChangeStart, afterChangeEnd);
     int targetCursorPosition = currentResultSelectionStart;
     if (replacementText.isEmpty) {
-      var removeRangeStart = currentResultSelectionStart;
-      var removeRangeEnd = currentResultSelectionStart + currentResultSelectionLength;
-      _resultTextArray.removeRange(removeRangeStart, removeRangeEnd);
+      _resultTextArray.removeRange(currentResultSelectionStart, currentResultSelectionStart + currentResultSelectionLength);
     } else {
       if (currentResultSelectionLength > 0) {
         _resultTextArray.removeRange(currentResultSelectionStart, currentResultSelectionStart + currentResultSelectionLength);
@@ -176,11 +174,11 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
       bool curTextInRange = curTextPos < _resultTextArray.length;
 
-      String curTextChar;
+      String? curTextChar;
       if (isMaskChar && curTextInRange) {
         while (curTextChar == null && curTextInRange) {
           final String potentialTextChar = _resultTextArray[curTextPos];
-          if (_maskFilter != null && _maskFilter[curMaskChar]?.hasMatch(potentialTextChar) == true) {
+          if (_maskFilter?[curMaskChar]?.hasMatch(potentialTextChar) == true) {
             curTextChar = potentialTextChar;
           } else {
             _resultTextArray.removeAt(curTextPos);
@@ -228,13 +226,13 @@ class MaskTextInputFormatter implements TextInputFormatter {
     final int finalCursorPosition = cursorPos < 0 ? _resultTextMasked.length : cursorPos;
 
     return TextEditingValue(
-      text: _resultTextMasked,
-      selection: TextSelection(
-        baseOffset: finalCursorPosition,
-        extentOffset: finalCursorPosition,
-        affinity: newValue.selection.affinity,
-        isDirectional: newValue.selection.isDirectional
-      )
+        text: _resultTextMasked,
+        selection: TextSelection(
+            baseOffset: finalCursorPosition,
+            extentOffset: finalCursorPosition,
+            affinity: newValue.selection.affinity,
+            isDirectional: newValue.selection.isDirectional
+        )
     );
   }
 
@@ -252,7 +250,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
   void _updateFilter(Map<String, RegExp> filter) {
     _maskFilter = filter;
-    _maskChars = _maskFilter?.keys?.toList(growable: false) ?? [];
+    _maskChars = _maskFilter?.keys.toList(growable: false) ?? [];
   }
 }
 
