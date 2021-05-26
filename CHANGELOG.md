@@ -1,3 +1,7 @@
+## [2.0.0]
+
+Stable version
+
 ## [1.2.1] / [2.0.0-nullsafety.2]
 
 Fix bug  
