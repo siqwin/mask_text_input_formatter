@@ -110,7 +110,16 @@ class MaskTextInputFormatter implements TextInputFormatter {
     final TextSelection afterSelection = newValue.selection;
 
     final int beforeSelectionStart = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.start : 0 : 0;
-    final int beforeSelectionLength = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.end - beforeSelection.start : 0 : oldValue.text.length;
+    int beforeSelectionEnd = beforeSelection.end;
+
+    if (
+      beforeText.length > afterText.length && // when removing the numbers
+      beforeSelection.end == beforeSelection.start // marker of that something wrong happens (only for some Android devices)
+      ) {
+      beforeSelectionEnd = beforeSelection.end + (beforeText.length - afterText.length);
+    }
+    
+    final int beforeSelectionLength = afterSelection.isValid ? beforeSelection.isValid ? beforeSelectionEnd - beforeSelection.start : 0 : oldValue.text.length;
 
     final int lengthDifference = afterText.length - (beforeText.length - beforeSelectionLength);
     final int lengthRemoved = lengthDifference < 0 ? lengthDifference.abs() : 0;
