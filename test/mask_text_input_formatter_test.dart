@@ -69,6 +69,12 @@ void main() {
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
     });
 
+    test('Insert without prefix', () {
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "+998 (••) ••• •• ••", filter: {"•": RegExp(r'[0-9]')});
+      maskTextInputFormatter.formatEditUpdate(const TextEditingValue(), const TextEditingValue(text: "909006053", selection: TextSelection.collapsed(offset: 9)));
+      expect(maskTextInputFormatter.getMaskedText(), "+998 (90) 900 60 53");
+    });
+
     test('Remove - Part - 1', () {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+# (###) ###-##-##");
       TextEditingValue currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(const TextEditingValue(), const TextEditingValue(text: "01234567890", selection: TextSelection.collapsed(offset: 11)));

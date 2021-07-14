@@ -1,6 +1,6 @@
 name: mask_text_input_formatter
 description: The package provides TextInputFormatter for TextField and TextFormField which format the input by a given mask.
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/siqwin/mask_text_input_formatter
 
 environment:

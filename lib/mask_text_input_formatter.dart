@@ -154,10 +154,15 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
     if (beforeResultTextLength == 0 && _resultTextArray.length  > 1) {
       for (var i = 0; i < mask.length; i++) {
-        if (_maskChars.contains(mask[i]) || _resultTextArray.isEmpty) {
+        if (_maskChars.contains(mask[i])) {
+          final resultPrefix = _resultTextArray._symbolArray.take(i).toList();
+          for (var j = 0; j < resultPrefix.length; j++) {
+            if (_resultTextArray.length <= j || (mask[j] != resultPrefix[j] || (mask[j] == resultPrefix[j] && j == resultPrefix.length - 1))) {
+              _resultTextArray.removeRange(0, j);
+              break;
+            }
+          }
           break;
-        } else if (mask[i] == _resultTextArray[0]) {
-          _resultTextArray.removeAt(0);
         }
       }
     }
