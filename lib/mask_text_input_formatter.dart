@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class MaskTextInputFormatter implements TextInputFormatter {
+  /// Set the autocompletion behavior:
+  ///  - [MaskAutoCompletion.lazy] (default): autocomplete unfiltered characters once the following filtered character is input.
+  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1", then "1/2"
+  ///  - [MaskAutoCompletion.eager]: autocomplete unfiltered characters when the previous filtered character is input.
+  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1/", then "1/2"
+  final MaskAutoCompletion autoCompletion;
 
   String? _mask;
   List<String> _maskChars = [];
@@ -23,7 +29,8 @@ class MaskTextInputFormatter implements TextInputFormatter {
   MaskTextInputFormatter({
     String? mask,
     Map<String, RegExp>? filter,
-    String? initialText
+    String? initialText,
+    this.autoCompletion = MaskAutoCompletion.lazy,
   }) {
     updateMask(mask: mask, filter: filter ?? {"#": RegExp(r'[0-9]'), "A": RegExp(r'[^0-9]')});
     if (initialText != null) {
@@ -32,7 +39,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
   }
 
   /// Change the mask
-  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter}) {
+  TextEditingValue updateMask({String? mask, Map<String, RegExp>? filter}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
@@ -74,17 +81,17 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
   /// Mask some text
   String maskText(String text) {
-    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, initialText: text).getMaskedText();
+    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, initialText: text, autoCompletion: autoCompletion).getMaskedText();
   }
 
   /// Unmask some text
   String unmaskText(String text) {
-    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, initialText: text).getUnmaskedText();
+    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, initialText: text, autoCompletion: autoCompletion).getUnmaskedText();
   }
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (_lastResValue == oldValue && newValue == _lastNewValue) {
+    if (_lastResValue == oldValue && newValue == _lastNewValue && autoCompletion != MaskAutoCompletion.eager) {
       return oldValue;
     }
     if (oldValue.text.isEmpty) {
@@ -105,12 +112,21 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
     final String beforeText = oldValue.text;
     final String afterText = newValue.text;
+    final bool isDeletion = afterText.length < beforeText.length;
 
     final TextSelection beforeSelection = oldValue.selection;
     final TextSelection afterSelection = newValue.selection;
 
-    final int beforeSelectionStart = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.start : 0 : 0;
-    final int beforeSelectionLength = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.end - beforeSelection.start : 0 : oldValue.text.length;
+    final int beforeSelectionStart = afterSelection.isValid
+        ? beforeSelection.isValid
+            ? beforeSelection.start
+            : 0
+        : 0;
+    final int beforeSelectionLength = afterSelection.isValid
+        ? beforeSelection.isValid
+            ? beforeSelection.end - beforeSelection.start
+            : 0
+        : oldValue.text.length;
 
     final int lengthDifference = afterText.length - (beforeText.length - beforeSelectionLength);
     final int lengthRemoved = lengthDifference < 0 ? lengthDifference.abs() : 0;
@@ -152,7 +168,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
       targetCursorPosition += replacementText.length;
     }
 
-    if (beforeResultTextLength == 0 && _resultTextArray.length  > 1) {
+    if (beforeResultTextLength == 0 && _resultTextArray.length > 1) {
       for (var i = 0; i < mask.length; i++) {
         if (_maskChars.contains(mask[i])) {
           final resultPrefix = _resultTextArray._symbolArray.take(i).toList();
@@ -207,7 +223,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
           cursorPos = maskPos;
         }
 
-        if (!curTextInRange) {
+        if (_mustEndMaskIteration(curTextInRange, isMaskChar)) {
           break;
         } else {
           _resultTextMasked += mask[maskPos];
@@ -220,8 +236,17 @@ class MaskTextInputFormatter implements TextInputFormatter {
     }
 
     if (nonMaskedCount > 0) {
-      _resultTextMasked = _resultTextMasked.substring(0, _resultTextMasked.length - nonMaskedCount);
-      cursorPos -= nonMaskedCount;
+      switch (autoCompletion) {
+        case MaskAutoCompletion.eager:
+          if (!isDeletion) {
+            cursorPos += nonMaskedCount;
+          }
+          break;
+        case MaskAutoCompletion.lazy:
+          _resultTextMasked = _resultTextMasked.substring(0, _resultTextMasked.length - nonMaskedCount);
+          cursorPos -= nonMaskedCount;
+          break;
+      }
     }
 
     if (_resultTextArray.length > _maskLength) {
@@ -236,9 +261,18 @@ class MaskTextInputFormatter implements TextInputFormatter {
         baseOffset: finalCursorPosition,
         extentOffset: finalCursorPosition,
         affinity: newValue.selection.affinity,
-        isDirectional: newValue.selection.isDirectional
-      )
+        isDirectional: newValue.selection.isDirectional,
+      ),
     );
+  }
+
+  bool _mustEndMaskIteration(bool curTextInRange, bool isMaskChar) {
+    switch (autoCompletion) {
+      case MaskAutoCompletion.lazy:
+        return !curTextInRange;
+      case MaskAutoCompletion.eager:
+        return isMaskChar;
+    }
   }
 
   void _calcMaskLength() {
@@ -260,7 +294,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
 }
 
 class _TextMatcher {
-
   final List<String> _symbolArray = <String>[];
 
   int get length => _symbolArray.fold(0, (prev, match) => prev + match.length);
@@ -277,7 +310,7 @@ class _TextMatcher {
 
   void removeAt(int index) => _symbolArray.removeAt(index);
 
-  String operator[](int index) => _symbolArray[index];
+  String operator [](int index) => _symbolArray[index];
 
   void clear() => _symbolArray.clear();
 
@@ -290,5 +323,9 @@ class _TextMatcher {
       _symbolArray.add(text[i]);
     }
   }
+}
 
+enum MaskAutoCompletion {
+  lazy,
+  eager,
 }

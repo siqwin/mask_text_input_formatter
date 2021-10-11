@@ -240,6 +240,27 @@ void main() {
       expect(maskTextInputFormatter.getMaskedText(), "");
     });
 
+    test('Eager autocompletion', () {
+      const String input = '1';
+      const String mask = '#/#';
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: mask, autoCompletion: MaskAutoCompletion.eager);
+      expect(mask, maskTextInputFormatter.getMask());
+      final masked = maskTextInputFormatter.maskText(input);
+      expect(masked, '1/');
+      final unmasked = maskTextInputFormatter.unmaskText(masked);
+      expect(unmasked, input);
+    });
+
+    test('Lazy autocompletion', () {
+      const String input = '1';
+      const String mask = '#/#';
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: mask, autoCompletion: MaskAutoCompletion.lazy);
+      expect(mask, maskTextInputFormatter.getMask());
+      final masked = maskTextInputFormatter.maskText(input);
+      expect(masked, '1');
+      final unmasked = maskTextInputFormatter.unmaskText(masked);
+      expect(unmasked, input);
+    });
   });
 
 }
