@@ -7,7 +7,6 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -15,18 +14,15 @@ class MyApp extends StatelessWidget {
       home: ExamplePage(title: 'ExamplePage'),
     );
   }
-
 }
 
 class ExamplePage extends StatefulWidget {
-
   final String title;
 
   const ExamplePage({Key key, this.title}) : super(key: key);
 
   @override
   _ExamplePageState createState() => _ExamplePageState();
-
 }
 
 class _ExampleMask {
@@ -38,20 +34,19 @@ class _ExampleMask {
 }
 
 class _ExamplePageState extends State<ExamplePage> {
-
   final List<_ExampleMask> examples = [
     _ExampleMask(
-      formatter: MaskTextInputFormatter(mask: "+# (###) ###-##-##"),
-      hint: "+1 (234) 567-89-01"
+      formatter: MaskTextInputFormatter(mask: '+# (###) ###-##-##'),
+      hint: '+1 (234) 567-89-01'
     ),
     _ExampleMask(
-      formatter: MaskTextInputFormatter(mask: "##/##/####"),
-      hint: "31/12/2020",
+      formatter: MaskTextInputFormatter(mask: '##/##/####'),
+      hint: '31/12/2020',
       validator: (value) {
         if (value.isEmpty) {
           return null;
         }
-        final components = value.split("/");
+        final components = value.split('/');
         if (components.length == 3) {
           final day = int.tryParse(components[0]);
           final month = int.tryParse(components[1]);
@@ -63,20 +58,20 @@ class _ExamplePageState extends State<ExamplePage> {
             }
           }
         }
-        return "wrong date";
+        return 'wrong date';
       }
     ),
     _ExampleMask(
-      formatter: MaskTextInputFormatter(mask: "(AA) ####-####"),
-      hint: "(AB) 1234-5678"
+      formatter: MaskTextInputFormatter(mask: '(AA) ####-####'),
+      hint: '(AB) 1234-5678'
     ),
     _ExampleMask(
-      formatter: MaskTextInputFormatter(mask: "####.AAAAAA/####-####"),
-      hint: "1234.ABCDEF/2019-2020"
+      formatter: MaskTextInputFormatter(mask: '####.AAAAAA/####-####'),
+      hint: '1234.ABCDEF/2019-2020'
     ),
     _ExampleMask(
       formatter: SpecialMaskTextInputFormatter(),
-      hint: "A.1234 or B.123456"
+      hint: 'A.1234 or B.123456'
     ),
   ];
 
@@ -143,32 +138,29 @@ class _ExamplePageState extends State<ExamplePage> {
 }
 
 class UpperCaseTextFormatter implements TextInputFormatter {
-
   const UpperCaseTextFormatter();
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     return TextEditingValue(text: newValue.text?.toUpperCase(), selection: newValue.selection);
   }
-
 }
 
 class SpecialMaskTextInputFormatter extends MaskTextInputFormatter {
-
-  static String maskA = "S.####";
-  static String maskB = "S.######";
+  static String maskA = 'S.####';
+  static String maskB = 'S.######';
 
   SpecialMaskTextInputFormatter({
     String initialText
   }): super(
     mask: maskA,
-    filter: {"#": RegExp(r'[0-9]'), "S": RegExp(r'[AB]')},
+    filter: {'#': RegExp(r'[0-9]'), 'S': RegExp(r'[AB]')},
     initialText: initialText
   );
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.startsWith("A")) {
+    if (newValue.text.startsWith('A')) {
       if (getMask() != maskA) {
         updateMask(mask: maskA);
       }
@@ -179,6 +171,5 @@ class SpecialMaskTextInputFormatter extends MaskTextInputFormatter {
     }
     return super.formatEditUpdate(oldValue, newValue);
   }
-
 }
 

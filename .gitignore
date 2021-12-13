@@ -14,7 +14,6 @@ pubspec.lock
 **/.idea/*
 .metadata
 *.iml
-analysis_options.yaml
 /example/android/
 /example/ios/
 /doc/
