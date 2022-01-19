@@ -1,3 +1,7 @@
+## [2.1.0]
+
+Added support for eager autocompletion. Thanks to @jyardin
+
 ## [2.0.2]
 
 Add analysis_options

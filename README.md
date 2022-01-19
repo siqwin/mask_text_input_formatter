@@ -25,7 +25,11 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 3. Create mask formatter:
 
 ```dart
-var maskFormatter = new MaskTextInputFormatter(mask: '+# (###) ###-##-##', filter: { "#": RegExp(r'[0-9]') });
+var maskFormatter = new MaskTextInputFormatter(
+  mask: '+# (###) ###-##-##', 
+  filter: { "#": RegExp(r'[0-9]') },
+  type: MaskAutoCompletionType.lazy
+);
 ```
 
 4. Set it to text field:

@@ -2,7 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 
+enum MaskAutoCompletionType {
+  lazy,
+  eager,
+}
+
 class MaskTextInputFormatter implements TextInputFormatter {
+
+  final MaskAutoCompletionType type;
 
   String? _mask;
   List<String> _maskChars = [];
@@ -19,10 +26,17 @@ class MaskTextInputFormatter implements TextInputFormatter {
   ///
   /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
   /// By default `#` match to the number and `A` to the letter
+  ///
+  /// Set [type] for autocompletion behavior:
+  ///  - [MaskAutoCompletionType.lazy] (default): autocomplete unfiltered characters once the following filtered character is input.
+  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1", then "1/2"
+  ///  - [MaskAutoCompletionType.eager]: autocomplete unfiltered characters when the previous filtered character is input.
+  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1/", then "1/2"
   MaskTextInputFormatter({
     String? mask,
     Map<String, RegExp>? filter,
-    String? initialText
+    String? initialText,
+    this.type = MaskAutoCompletionType.lazy,
   }) {
     updateMask(mask: mask, filter: filter ?? {"#": RegExp('[0-9]'), "A": RegExp('[^0-9]')});
     if (initialText != null) {
@@ -192,6 +206,8 @@ class MaskTextInputFormatter implements TextInputFormatter {
             }
           }
         }
+      } else if (!isMaskChar && !curTextInRange && type == MaskAutoCompletionType.eager) {
+        curTextInRange = true;
       }
 
       if (isMaskChar && curTextInRange && curTextChar != null) {
@@ -212,7 +228,9 @@ class MaskTextInputFormatter implements TextInputFormatter {
           _resultTextMasked += mask[maskPos];
         }
 
-        nonMaskedCount++;
+        if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0) {
+          nonMaskedCount++;
+        }
       }
 
       maskPos += 1;

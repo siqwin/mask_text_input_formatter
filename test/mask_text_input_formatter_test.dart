@@ -240,6 +240,32 @@ void main() {
       expect(maskTextInputFormatter.getMaskedText(), "");
     });
 
+    test('Eager / Lazy autocompletion', () {
+      const mask = '#/#';
+
+      final lazyMaskTextInputFormatter = MaskTextInputFormatter(mask: mask, type: MaskAutoCompletionType.lazy);
+      final eagerMaskTextInputFormatter = MaskTextInputFormatter(mask: mask, type: MaskAutoCompletionType.eager);
+
+      var lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1"));
+      var eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1"));
+
+      expect(lazyTextEditingValue.text, '1');
+      expect(eagerTextEditingValue.text, '1/');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1/2"));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "12"));
+
+      expect(lazyTextEditingValue.text, '1/2');
+      expect(eagerTextEditingValue.text, '1/2');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1/"));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1"));
+
+      expect(lazyTextEditingValue.text, '1');
+      expect(eagerTextEditingValue.text, '1/');
+    });
+
   });
+
 
 }

@@ -78,6 +78,10 @@ class _ExamplePageState extends State<ExamplePage> {
       formatter: SpecialMaskTextInputFormatter(),
       hint: "A.1234 or B.123456"
     ),
+    _ExampleMask(
+      formatter: MaskTextInputFormatter(mask: "##/##/##", type: MaskAutoCompletionType.eager),
+      hint: "12/34/56 (eager type)"
+    ),
   ];
 
   @override
