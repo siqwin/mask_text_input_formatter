@@ -1,3 +1,7 @@
+## [2.0.2]
+
+Add analysis_options
+
 ## [2.0.1]
 
 Fix #52

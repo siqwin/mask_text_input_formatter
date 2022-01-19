@@ -1,12 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+
+  const MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +162,7 @@ class SpecialMaskTextInputFormatter extends MaskTextInputFormatter {
     String initialText
   }): super(
     mask: maskA,
-    filter: {"#": RegExp(r'[0-9]'), "S": RegExp(r'[AB]')},
+    filter: {"#": RegExp('[0-9]'), "S": RegExp('[AB]')},
     initialText: initialText
   );
 
