@@ -14,7 +14,7 @@ Check 'example' folder for code sample
 
 ## Usage
 
-1. Follow the install [guide](https://pub.dartlang.org/packages/mask_text_input_formatter#-installing-tab-)
+1. Follow the [install guide](https://pub.dev/packages/mask_text_input_formatter/install)
 
 2. Import the library:
 
