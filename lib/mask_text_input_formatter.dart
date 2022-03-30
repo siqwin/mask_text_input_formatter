@@ -19,9 +19,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
   final _TextMatcher _resultTextArray = _TextMatcher();
   String _resultTextMasked = "";
 
-  TextEditingValue? _lastResValue;
-  TextEditingValue? _lastNewValue;
-
   /// Create the [mask] formatter for TextField
   ///
   /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
@@ -81,8 +78,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
   void clear() {
     _resultTextMasked = "";
     _resultTextArray.clear();
-    _lastResValue = null;
-    _lastNewValue = null;
   }
 
   /// Mask some text
@@ -97,23 +92,16 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (_lastResValue == oldValue && newValue == _lastNewValue) {
-      return oldValue;
-    }
-    if (oldValue.text.isEmpty) {
-      _resultTextArray.clear();
-    }
-    _lastNewValue = newValue;
-    return _lastResValue = _format(oldValue, newValue);
-  }
-
-  TextEditingValue _format(TextEditingValue oldValue, TextEditingValue newValue) {
     final mask = _mask;
 
     if (mask == null || mask.isEmpty == true) {
       _resultTextMasked = newValue.text;
       _resultTextArray.set(newValue.text);
       return newValue;
+    }
+
+    if (oldValue.text.isEmpty) {
+      _resultTextArray.clear();
     }
 
     final beforeText = oldValue.text;

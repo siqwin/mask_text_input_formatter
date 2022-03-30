@@ -1,3 +1,7 @@
+## [2.2.0]
+
+Fix eager autocompletion #68
+
 ## [2.1.0]
 
 Added support for eager autocompletion. Thanks to @jyardin

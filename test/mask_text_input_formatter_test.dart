@@ -246,23 +246,58 @@ void main() {
       final lazyMaskTextInputFormatter = MaskTextInputFormatter(mask: mask, type: MaskAutoCompletionType.lazy);
       final eagerMaskTextInputFormatter = MaskTextInputFormatter(mask: mask, type: MaskAutoCompletionType.eager);
 
-      var lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1"));
-      var eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1"));
+      var lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
+      var eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
 
       expect(lazyTextEditingValue.text, '1');
       expect(eagerTextEditingValue.text, '1/');
 
-      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1/2"));
-      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "12"));
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1/2", selection: TextSelection.collapsed(offset: 3)));
 
       expect(lazyTextEditingValue.text, '1/2');
       expect(eagerTextEditingValue.text, '1/2');
 
-      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1/"));
-      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1"));
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1/", selection: TextSelection.collapsed(offset: 2)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1/", selection: TextSelection.collapsed(offset: 2)));
+
+      expect(lazyTextEditingValue.text, '1');
+      expect(eagerTextEditingValue.text, '1');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
+
+      expect(lazyTextEditingValue.text, '');
+      expect(eagerTextEditingValue.text, '');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
+
+      expect(lazyTextEditingValue.text, '1/2');
+      expect(eagerTextEditingValue.text, '1/2');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
+
+      expect(lazyTextEditingValue.text, '');
+      expect(eagerTextEditingValue.text, '');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
 
       expect(lazyTextEditingValue.text, '1');
       expect(eagerTextEditingValue.text, '1/');
+
+      lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
+
+      expect(lazyTextEditingValue.text, '');
+      expect(eagerTextEditingValue.text, '1');
+
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
+
+      expect(eagerTextEditingValue.text, '1/2');
+
     });
 
   });

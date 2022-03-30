@@ -6,13 +6,13 @@ void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
 
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({ Key? key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ExamplePage(title: 'ExamplePage'),
+      home: ExamplePage(),
     );
   }
 
@@ -20,35 +20,49 @@ class MyApp extends StatelessWidget {
 
 class ExamplePage extends StatefulWidget {
 
-  final String title;
-
-  const ExamplePage({Key key, this.title}) : super(key: key);
+  const ExamplePage({ Key? key }) : super(key: key);
 
   @override
-  _ExamplePageState createState() => _ExamplePageState();
+  ExamplePageState createState() => ExamplePageState();
 
 }
 
-class _ExampleMask {
+class ExampleMask {
+
   final TextEditingController textController = TextEditingController();
   final MaskTextInputFormatter formatter;
-  final FormFieldValidator<String> validator;
+  final FormFieldValidator<String>? validator;
   final String hint;
-  _ExampleMask({ @required this.formatter, this.validator, @required this.hint });
+  final TextInputType textInputType;
+
+  ExampleMask({
+    required this.formatter,
+    this.validator,
+    required this.hint,
+    required this.textInputType
+  });
+
 }
 
-class _ExamplePageState extends State<ExamplePage> {
+class ExamplePageState extends State<ExamplePage> {
 
-  final List<_ExampleMask> examples = [
-    _ExampleMask(
+  final List<ExampleMask> examples = [
+    ExampleMask(
       formatter: MaskTextInputFormatter(mask: "+# (###) ###-##-##"),
-      hint: "+1 (234) 567-89-01"
+      hint: "+1 (234) 567-89-01",
+      textInputType: TextInputType.phone
     ),
-    _ExampleMask(
+    ExampleMask(
+      formatter: MaskTextInputFormatter(mask: "+# (###) ###-##-##", type: MaskAutoCompletionType.eager),
+      hint: "+1 (234) 567-89-01 (eager type)",
+      textInputType: TextInputType.phone,
+    ),
+    ExampleMask(
       formatter: MaskTextInputFormatter(mask: "##/##/####"),
       hint: "31/12/2020",
+      textInputType: TextInputType.phone,
       validator: (value) {
-        if (value.isEmpty) {
+        if (value == null || value.isEmpty) {
           return null;
         }
         final components = value.split("/");
@@ -66,21 +80,20 @@ class _ExamplePageState extends State<ExamplePage> {
         return "wrong date";
       }
     ),
-    _ExampleMask(
+    ExampleMask(
       formatter: MaskTextInputFormatter(mask: "(AA) ####-####"),
-      hint: "(AB) 1234-5678"
+      hint: "(AB) 1234-5678",
+      textInputType: TextInputType.text,
     ),
-    _ExampleMask(
+    ExampleMask(
       formatter: MaskTextInputFormatter(mask: "####.AAAAAA/####-####"),
-      hint: "1234.ABCDEF/2019-2020"
+      hint: "1234.ABCDEF/2019-2020",
+      textInputType: TextInputType.text,
     ),
-    _ExampleMask(
+    ExampleMask(
       formatter: SpecialMaskTextInputFormatter(),
-      hint: "A.1234 or B.123456"
-    ),
-    _ExampleMask(
-      formatter: MaskTextInputFormatter(mask: "##/##/##", type: MaskAutoCompletionType.eager),
-      hint: "12/34/56 (eager type)"
+      hint: "A.1234 or B.123456",
+      textInputType: TextInputType.text,
     ),
   ];
 
@@ -91,29 +104,26 @@ class _ExamplePageState extends State<ExamplePage> {
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          children: [
-            for (final example in examples)
-              buildTextField(example.textController, example.formatter, example.validator, example.hint),
-          ],
+          children: examples.map(buildTextField).toList()
         )
       )
     );
   }
 
-  Widget buildTextField(TextEditingController textEditingController, MaskTextInputFormatter textInputFormatter, FormFieldValidator<String> validator, String hint) {
+  Widget buildTextField(ExampleMask example) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Stack(
         children: [
           TextFormField(
-            controller: textEditingController,
-            inputFormatters: [const UpperCaseTextFormatter(), textInputFormatter],
+            controller: example.textController,
+            inputFormatters: [UpperCaseTextFormatter(), example.formatter],
             autocorrect: false,
-            keyboardType: TextInputType.phone,
+            keyboardType: example.textInputType,
             autovalidateMode: AutovalidateMode.always,
-            validator: validator,
+            validator: example.validator,
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: example.hint,
               hintStyle: const TextStyle(color: Colors.grey),
               fillColor: Colors.white,
               filled: true,
@@ -135,7 +145,7 @@ class _ExamplePageState extends State<ExamplePage> {
                 child: InkWell(
                   borderRadius: const BorderRadius.all(Radius.circular(24)),
                   child: const Icon(Icons.clear, color: Colors.grey, size: 24),
-                  onTap: () => textEditingController.clear()
+                  onTap: () => example.textController.clear()
                 ),
               )
             ),
@@ -152,7 +162,7 @@ class UpperCaseTextFormatter implements TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    return TextEditingValue(text: newValue.text?.toUpperCase(), selection: newValue.selection);
+    return TextEditingValue(text: newValue.text.toUpperCase(), selection: newValue.selection);
   }
 
 }
@@ -163,7 +173,7 @@ class SpecialMaskTextInputFormatter extends MaskTextInputFormatter {
   static String maskB = "S.######";
 
   SpecialMaskTextInputFormatter({
-    String initialText
+    String? initialText
   }): super(
     mask: maskA,
     filter: {"#": RegExp('[0-9]'), "S": RegExp('[AB]')},
