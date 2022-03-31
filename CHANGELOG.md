@@ -1,3 +1,7 @@
+## [2.3.0]
+
+Fix #62
+
 ## [2.2.0]
 
 Fix eager autocompletion #68

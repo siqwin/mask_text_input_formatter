@@ -110,8 +110,16 @@ class MaskTextInputFormatter implements TextInputFormatter {
     final beforeSelection = oldValue.selection;
     final afterSelection = newValue.selection;
 
-    final beforeSelectionStart = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.start : 0 : 0;
-    final beforeSelectionLength = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.end - beforeSelection.start : 0 : oldValue.text.length;
+    var beforeSelectionStart = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.start : 0 : 0;
+
+    for (var i = 0; i < beforeSelectionStart && i < beforeText.length && i < afterText.length; i++) {
+      if (beforeText[i] != afterText[i]) {
+        beforeSelectionStart = i;
+        break;
+      }
+    }
+
+    final beforeSelectionLength = afterSelection.isValid ? beforeSelection.isValid ? beforeSelection.end - beforeSelectionStart : 0 : oldValue.text.length;
 
     final lengthDifference = afterText.length - (beforeText.length - beforeSelectionLength);
     final lengthRemoved = lengthDifference < 0 ? lengthDifference.abs() : 0;

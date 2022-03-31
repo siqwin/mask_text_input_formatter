@@ -110,13 +110,25 @@ void main() {
     });
 
     test('Remove - Part - 4', () {
-      final maskTextInputFormatter = MaskTextInputFormatter(mask: "###");
-      var currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "123", selection: TextSelection.collapsed(offset: 3)));
-      currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "11", selection: TextSelection.collapsed(offset: 2)));
-      expect(currentTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "## ## ##");
+      var textEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "123", selection: TextSelection.collapsed(offset: 3)));
+      textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "11", selection: TextSelection.collapsed(offset: 2)));
+      expect(textEditingValue, const TextEditingValue(text: "11", selection: TextSelection.collapsed(offset: 2)));
       expect(maskTextInputFormatter.isFill(), false);
-      expect(maskTextInputFormatter.getMaskedText(), "12");
-      expect(maskTextInputFormatter.getUnmaskedText(), "12");
+      expect(maskTextInputFormatter.getMaskedText(), "11");
+      expect(maskTextInputFormatter.getUnmaskedText(), "11");
+
+      textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "123", selection: TextSelection.collapsed(offset: 3)));
+      expect(textEditingValue.text, "12 3");
+
+      textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "555555", selection: TextSelection.collapsed(offset: 6)));
+      expect(textEditingValue.text, "55 55 55");
+
+      textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "555333", selection: TextSelection.collapsed(offset: 6)));
+      expect(textEditingValue.text, "55 53 33");
+
+      textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "333555", selection: TextSelection.collapsed(offset: 6)));
+      expect(textEditingValue.text, "33 35 55");
     });
 
     test('Remove - All', () {
