@@ -156,6 +156,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
     } else {
       if (currentResultSelectionLength > 0) {
         _resultTextArray.removeRange(currentResultSelectionStart, currentResultSelectionStart + currentResultSelectionLength);
+        currentResultSelectionLength = 0;
       }
       _resultTextArray.insert(currentResultSelectionStart, replacementText);
       targetCursorPosition += replacementText.length;
@@ -224,7 +225,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
           _resultTextMasked += mask[maskPos];
         }
 
-        if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0) {
+        if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0 || currentResultSelectionLength > 0) {
           nonMaskedCount++;
         }
       }

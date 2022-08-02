@@ -312,6 +312,15 @@ void main() {
 
     });
 
+    test('Eager autocompletion 2', () {
+      final eagerMaskTextInputFormatter = MaskTextInputFormatter(mask: '####.A', initialText: "1234.S", type: MaskAutoCompletionType.eager);
+      final eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(
+          const TextEditingValue(text: "1234.S", selection: TextSelection(baseOffset: 5, extentOffset: 6)),
+          const TextEditingValue(text: "1234.", selection: TextSelection(baseOffset: 5, extentOffset: 5))
+      );
+      expect(eagerTextEditingValue.text, '1234');
+    });
+
   });
 
 

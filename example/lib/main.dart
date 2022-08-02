@@ -117,7 +117,7 @@ class ExamplePageState extends State<ExamplePage> {
         children: [
           TextFormField(
             controller: example.textController,
-            inputFormatters: [UpperCaseTextFormatter(), example.formatter],
+            inputFormatters: [const UpperCaseTextFormatter(), example.formatter],
             autocorrect: false,
             keyboardType: example.textInputType,
             autovalidateMode: AutovalidateMode.always,
