@@ -42,7 +42,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
   }
 
   /// Change the mask
-  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter}) {
+  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter, TextEditingValue? newValue}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
@@ -50,7 +50,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
     _calcMaskLength();
     final unmaskedText = getUnmaskedText();
     clear();
-    return formatEditUpdate(TextEditingValue.empty, TextEditingValue(text: unmaskedText, selection: TextSelection.collapsed(offset: unmaskedText.length)));
+    return formatEditUpdate(TextEditingValue.empty, newValue ?? TextEditingValue(text: unmaskedText, selection: TextSelection.collapsed(offset: unmaskedText.length)));
   }
 
   /// Get current mask
