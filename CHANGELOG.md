@@ -1,3 +1,8 @@
+## [2.5.0]
+
+Fixed: #70
+Added: newValue parameter to updateMask method
+
 ## [2.4.0]
 
 Fix #70

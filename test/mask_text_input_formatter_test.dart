@@ -27,8 +27,8 @@ void main() {
       final currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "01234567", selection: TextSelection.collapsed(offset: 8)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-7", selection: TextSelection.collapsed(offset: 14)));
       expect(maskTextInputFormatter.isFill(), false);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-7");
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-7");
     });
 
     test('Insert - End', () {
@@ -37,8 +37,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-7890", selection: TextSelection.collapsed(offset: 18)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 18)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
     });
 
     test('Insert - Overflow', () {
@@ -46,8 +46,8 @@ void main() {
       final currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "01234567890123456", selection: TextSelection.collapsed(offset: 18)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 18)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
     });
 
     test('Insert - Overflow - 2', () {
@@ -56,8 +56,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "1234", selection: TextSelection.collapsed(offset: 4)));
       expect(currentTextEditingValue, const TextEditingValue(text: "123", selection: TextSelection.collapsed(offset: 3)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "123");
       expect(maskTextInputFormatter.getUnmaskedText(), "123");
+      expect(maskTextInputFormatter.getMaskedText(), "123");
     });
 
     test('Insert - Incorrect symbols', () {
@@ -65,13 +65,14 @@ void main() {
       final currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 18)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 18)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
     });
 
     test('Insert without prefix', () {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+998 (••) ••• •• ••", filter: {"•": RegExp('[0-9]')})
         ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "909006053", selection: TextSelection.collapsed(offset: 9)));
+      expect(maskTextInputFormatter.getUnmaskedText(), "909006053");
       expect(maskTextInputFormatter.getMaskedText(), "+998 (90) 900 60 53");
     });
 
@@ -82,8 +83,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (1) 456-78-90", selection: TextSelection.collapsed(offset: 5)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (145) 678-90", selection: TextSelection.collapsed(offset: 5)));
       expect(maskTextInputFormatter.isFill(), false);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (145) 678-90");
       expect(maskTextInputFormatter.getUnmaskedText(), "014567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (145) 678-90");
     });
 
     test('Remove - Part - 2', () {
@@ -93,9 +94,13 @@ void main() {
 
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "(255) 555-", selection: TextSelection.collapsed(offset: 10)));
       expect(currentTextEditingValue, const TextEditingValue(text: "(255) 555", selection: TextSelection.collapsed(offset: 9)));
+      expect(maskTextInputFormatter.getUnmaskedText(), "255555");
+      expect(maskTextInputFormatter.getMaskedText(), "(255) 555");
 
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "(255) 55", selection: TextSelection.collapsed(offset: 8)));
       expect(currentTextEditingValue, const TextEditingValue(text: "(255) 55", selection: TextSelection.collapsed(offset: 8)));
+      expect(maskTextInputFormatter.getUnmaskedText(), "25555");
+      expect(maskTextInputFormatter.getMaskedText(), "(255) 55");
     });
 
     test('Remove - Part - 3', () {
@@ -105,8 +110,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (156-78-90", selection: TextSelection.collapsed(offset: 5)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (156) 789-0", selection: TextSelection.collapsed(offset: 5)));
       expect(maskTextInputFormatter.isFill(), false);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (156) 789-0");
       expect(maskTextInputFormatter.getUnmaskedText(), "01567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (156) 789-0");
     });
 
     test('Remove - Part - 4', () {
@@ -115,20 +120,28 @@ void main() {
       textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "11", selection: TextSelection.collapsed(offset: 2)));
       expect(textEditingValue, const TextEditingValue(text: "11", selection: TextSelection.collapsed(offset: 2)));
       expect(maskTextInputFormatter.isFill(), false);
-      expect(maskTextInputFormatter.getMaskedText(), "11");
       expect(maskTextInputFormatter.getUnmaskedText(), "11");
+      expect(maskTextInputFormatter.getMaskedText(), "11");
 
       textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "123", selection: TextSelection.collapsed(offset: 3)));
       expect(textEditingValue.text, "12 3");
+      expect(maskTextInputFormatter.getUnmaskedText(), "123");
+      expect(maskTextInputFormatter.getMaskedText(), "12 3");
 
       textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "555555", selection: TextSelection.collapsed(offset: 6)));
       expect(textEditingValue.text, "55 55 55");
+      expect(maskTextInputFormatter.getUnmaskedText(), "555555");
+      expect(maskTextInputFormatter.getMaskedText(), "55 55 55");
 
       textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "555333", selection: TextSelection.collapsed(offset: 6)));
       expect(textEditingValue.text, "55 53 33");
+      expect(maskTextInputFormatter.getUnmaskedText(), "555333");
+      expect(maskTextInputFormatter.getMaskedText(), "55 53 33");
 
       textEditingValue = maskTextInputFormatter.formatEditUpdate(textEditingValue, const TextEditingValue(text: "333555", selection: TextSelection.collapsed(offset: 6)));
       expect(textEditingValue.text, "33 35 55");
+      expect(maskTextInputFormatter.getUnmaskedText(), "333555");
+      expect(maskTextInputFormatter.getMaskedText(), "33 35 55");
     });
 
     test('Remove - All', () {
@@ -136,8 +149,8 @@ void main() {
       var currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "01234567890", selection: TextSelection.collapsed(offset: 11)));
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue.empty);
       expect(maskTextInputFormatter.isFill(), false);
-      expect(maskTextInputFormatter.getMaskedText(), "");
       expect(maskTextInputFormatter.getUnmaskedText(), "");
+      expect(maskTextInputFormatter.getMaskedText(), "");
     });
 
     test('Replace - Part - 1', () {
@@ -147,8 +160,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (132) 456-78-90", selection: TextSelection.collapsed(offset: 7)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (132) 456-78-90", selection: TextSelection.collapsed(offset: 7)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (132) 456-78-90");
       expect(maskTextInputFormatter.getUnmaskedText(), "01324567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (132) 456-78-90");
     });
 
     test('Replace - Part - 2', () {
@@ -158,8 +171,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 10)));
       expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 10)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
+      expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
     });
 
     test('Replace - Part - 3', () {
@@ -168,8 +181,8 @@ void main() {
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "54443332211"));
       expect(currentTextEditingValue, const TextEditingValue(text: "+5 (444) 333-22-11", selection: TextSelection.collapsed(offset: 18)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "+5 (444) 333-22-11");
       expect(maskTextInputFormatter.getUnmaskedText(), "54443332211");
+      expect(maskTextInputFormatter.getMaskedText(), "+5 (444) 333-22-11");
     });
 
     test('Update mask', () {
@@ -180,33 +193,37 @@ void main() {
       var currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "12345678"));
       expect(currentTextEditingValue, const TextEditingValue(text: "1234-5678", selection: TextSelection.collapsed(offset: 9)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "1234-5678");
       expect(maskTextInputFormatter.getUnmaskedText(), "12345678");
+      expect(maskTextInputFormatter.getMaskedText(), "1234-5678");
 
       currentTextEditingValue = maskTextInputFormatter.updateMask(mask: secondMask);
       expect(currentTextEditingValue, const TextEditingValue(text: "12/34-56/78", selection: TextSelection.collapsed(offset: 11)));
       expect(maskTextInputFormatter.isFill(), true);
-      expect(maskTextInputFormatter.getMaskedText(), "12/34-56/78");
       expect(maskTextInputFormatter.getUnmaskedText(), "12345678");
+      expect(maskTextInputFormatter.getMaskedText(), "12/34-56/78");
     });
 
     test('Paste - All', () {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##")
         ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "+12345678901", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter.getUnmaskedText(), "2345678901");
       expect(maskTextInputFormatter.getMaskedText(), "+1 (234) 567-89-01");
     });
 
     test('Paste - All by mask', () {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##")
         ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "+1 (234) 567-89-01", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter.getUnmaskedText(), "2345678901");
       expect(maskTextInputFormatter.getMaskedText(), "+1 (234) 567-89-01");
     });
 
     test('Clear', () {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##")
         ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "+1 (234) 567-89-01", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter.getUnmaskedText(), "2345678901");
       expect(maskTextInputFormatter.getMaskedText(), "+1 (234) 567-89-01");
       maskTextInputFormatter.clear();
+      expect(maskTextInputFormatter.getUnmaskedText(), "");
       expect(maskTextInputFormatter.getMaskedText(), "");
     });
 
@@ -250,6 +267,7 @@ void main() {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-##-##", filter: {})
         ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "+1 (234) 567-89-01", selection: TextSelection.collapsed(offset: 12)));
       expect(maskTextInputFormatter.getMaskedText(), "");
+      expect(maskTextInputFormatter.getUnmaskedText(), "");
     });
 
     test('Eager / Lazy autocompletion', () {
@@ -262,63 +280,110 @@ void main() {
       var eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
 
       expect(lazyTextEditingValue.text, '1');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '1');
       expect(eagerTextEditingValue.text, '1/');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1/');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1/2", selection: TextSelection.collapsed(offset: 3)));
 
       expect(lazyTextEditingValue.text, '1/2');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '12');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '1/2');
       expect(eagerTextEditingValue.text, '1/2');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '12');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1/2');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1/", selection: TextSelection.collapsed(offset: 2)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1/", selection: TextSelection.collapsed(offset: 2)));
 
       expect(lazyTextEditingValue.text, '1');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '1');
       expect(eagerTextEditingValue.text, '1');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
 
       expect(lazyTextEditingValue.text, '');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '');
       expect(eagerTextEditingValue.text, '');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
 
       expect(lazyTextEditingValue.text, '1/2');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '12');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '1/2');
       expect(eagerTextEditingValue.text, '1/2');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '12');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1/2');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
 
       expect(lazyTextEditingValue.text, '');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '');
       expect(eagerTextEditingValue.text, '');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
 
       expect(lazyTextEditingValue.text, '1');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '1');
       expect(eagerTextEditingValue.text, '1/');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1/');
 
       lazyTextEditingValue = lazyMaskTextInputFormatter.formatEditUpdate(lazyTextEditingValue, const TextEditingValue(text: "", selection: TextSelection.collapsed(offset: 0)));
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
 
       expect(lazyTextEditingValue.text, '');
+      expect(lazyMaskTextInputFormatter.getUnmaskedText(), '');
+      expect(lazyMaskTextInputFormatter.getMaskedText(), '');
       expect(eagerTextEditingValue.text, '1');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '1');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1');
 
       eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(eagerTextEditingValue, const TextEditingValue(text: "12", selection: TextSelection.collapsed(offset: 2)));
 
       expect(eagerTextEditingValue.text, '1/2');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), '12');
+      expect(eagerMaskTextInputFormatter.getMaskedText(), '1/2');
 
     });
 
     test('Eager autocompletion 2', () {
-      final eagerMaskTextInputFormatter = MaskTextInputFormatter(mask: '####.A', initialText: "1234.S", type: MaskAutoCompletionType.eager);
-      final eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(
-          const TextEditingValue(text: "1234.S", selection: TextSelection(baseOffset: 5, extentOffset: 6)),
-          const TextEditingValue(text: "1234.", selection: TextSelection(baseOffset: 5, extentOffset: 5))
+      final eagerMaskTextInputFormatter = MaskTextInputFormatter(mask: '####.A', initialText: "1234.A", type: MaskAutoCompletionType.eager, filter: {"#": RegExp('[0-9]'), "A": RegExp('[A|B]')});
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), "1234A");
+      expect(eagerMaskTextInputFormatter.getMaskedText(), "1234.A");
+
+      var eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(
+        const TextEditingValue(text: "1234.A", selection: TextSelection(baseOffset: 5, extentOffset: 6)),
+        const TextEditingValue(text: "1234.", selection: TextSelection(baseOffset: 5, extentOffset: 5))
       );
       expect(eagerTextEditingValue.text, '1234');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), "1234");
+      expect(eagerMaskTextInputFormatter.getMaskedText(), "1234");
+
+      eagerTextEditingValue = eagerMaskTextInputFormatter.formatEditUpdate(
+        const TextEditingValue(text: "1234.", selection: TextSelection(baseOffset: 4, extentOffset: 5)),
+        const TextEditingValue(text: "1234", selection: TextSelection(baseOffset: 4, extentOffset: 4))
+      );
+      expect(eagerTextEditingValue.text, '1234');
+      expect(eagerMaskTextInputFormatter.getUnmaskedText(), "1234");
+      expect(eagerMaskTextInputFormatter.getMaskedText(), "1234");
     });
 
   });

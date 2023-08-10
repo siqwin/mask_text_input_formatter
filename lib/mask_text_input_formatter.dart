@@ -35,22 +35,27 @@ class MaskTextInputFormatter implements TextInputFormatter {
     String? initialText,
     this.type = MaskAutoCompletionType.lazy,
   }) {
-    updateMask(mask: mask, filter: filter ?? {"#": RegExp('[0-9]'), "A": RegExp('[^0-9]')});
-    if (initialText != null) {
-      formatEditUpdate(TextEditingValue.empty, TextEditingValue(text: initialText));
-    }
+    updateMask(
+      mask: mask,
+      filter: filter ?? {"#": RegExp('[0-9]'), "A": RegExp('[^0-9]')},
+      newValue: initialText == null ? null : TextEditingValue(text: initialText, selection: TextSelection.collapsed(offset: initialText.length))
+    );
   }
 
   /// Change the mask
-  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter}) {
+  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter, TextEditingValue? newValue}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
     }
     _calcMaskLength();
-    final unmaskedText = getUnmaskedText();
+    TextEditingValue? targetValue = newValue;
+    if (targetValue == null) {
+      final unmaskedText = getUnmaskedText();
+      targetValue = TextEditingValue(text: unmaskedText, selection: TextSelection.collapsed(offset: unmaskedText.length));
+    }
     clear();
-    return formatEditUpdate(TextEditingValue.empty, TextEditingValue(text: unmaskedText, selection: TextSelection.collapsed(offset: unmaskedText.length)));
+    return formatEditUpdate(TextEditingValue.empty, targetValue);
   }
 
   /// Get current mask
@@ -225,12 +230,12 @@ class MaskTextInputFormatter implements TextInputFormatter {
           _resultTextMasked += mask[maskPos];
         }
 
-        if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0 || currentResultSelectionLength > 0) {
+        if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0 || currentResultSelectionLength > 0 || beforeReplaceLength > 0) {
           nonMaskedCount++;
         }
       }
 
-      maskPos += 1;
+      maskPos++;
     }
 
     if (nonMaskedCount > 0) {

@@ -5,7 +5,7 @@ publish_to: none
 homepage: https://github.com/siqwin/mask_text_input_formatter
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -18,4 +18,6 @@ flutter:
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
