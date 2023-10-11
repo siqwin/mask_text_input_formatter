@@ -1,16 +1,20 @@
 import 'dart:math';
 
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-enum MaskAutoCompletionType {
-  lazy,
-  eager,
-}
+class SpecialMaskTextInputFormatter extends MaskTextInputFormatter {
+  SpecialMaskTextInputFormatter({this.mask, this.filter, this.initialText})
+      : super(
+          mask: mask,
+          filter: filter,
+          initialText: initialText,
+        );
 
-class MaskTextInputFormatter implements TextInputFormatter {
-  final MaskAutoCompletionType type;
+  final String? mask;
+  final Map<String, RegExp>? filter;
+  final String? initialText;
 
-  String? _mask;
   List<String> _maskChars = [];
   Map<String, RegExp>? _maskFilter;
 
@@ -18,87 +22,9 @@ class MaskTextInputFormatter implements TextInputFormatter {
   final _TextMatcher _resultTextArray = _TextMatcher();
   String _resultTextMasked = "";
 
-  /// Create the [mask] formatter for TextField
-  ///
-  /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
-  /// By default `#` match to the number and `A` to the letter
-  ///
-  /// Set [type] for autocompletion behavior:
-  ///  - [MaskAutoCompletionType.lazy] (default): autocomplete unfiltered characters once the following filtered character is input.
-  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1", then "1/2"
-  ///  - [MaskAutoCompletionType.eager]: autocomplete unfiltered characters when the previous filtered character is input.
-  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1/", then "1/2"
-  MaskTextInputFormatter({
-    String? mask,
-    Map<String, RegExp>? filter,
-    String? initialText,
-    this.type = MaskAutoCompletionType.lazy,
-  }) {
-    updateMask(
-        mask: mask,
-        filter: filter ?? {"#": RegExp('[0-9]'), "A": RegExp('[^0-9]')},
-        newValue: initialText == null
-            ? null
-            : TextEditingValue(text: initialText, selection: TextSelection.collapsed(offset: initialText.length)));
-  }
-
-  /// Change the mask
-  TextEditingValue updateMask({String? mask, Map<String, RegExp>? filter, TextEditingValue? newValue}) {
-    _mask = mask;
-    if (filter != null) {
-      _updateFilter(filter);
-    }
-    _calcMaskLength();
-    TextEditingValue? targetValue = newValue;
-    if (targetValue == null) {
-      final unmaskedText = getUnmaskedText();
-      targetValue =
-          TextEditingValue(text: unmaskedText, selection: TextSelection.collapsed(offset: unmaskedText.length));
-    }
-    clear();
-    return formatEditUpdate(TextEditingValue.empty, targetValue);
-  }
-
-  /// Get current mask
-  String? getMask() {
-    return _mask;
-  }
-
-  /// Get masked text, e.g. "+0 (123) 456-78-90"
-  String getMaskedText() {
-    return _resultTextMasked;
-  }
-
-  /// Get unmasked text, e.g. "01234567890"
-  String getUnmaskedText() {
-    return _resultTextArray.toString();
-  }
-
-  /// Check if target mask is filled
-  bool isFill() {
-    return _resultTextArray.length == _maskLength;
-  }
-
-  /// Clear masked text of the formatter
-  /// Note: you need to call this method if you clear the text of the TextField because it doesn't call the formatter when it has empty text
-  void clear() {
-    _resultTextMasked = "";
-    _resultTextArray.clear();
-  }
-
-  /// Mask some text
-  String maskText(String text) {
-    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, initialText: text).getMaskedText();
-  }
-
-  /// Unmask some text
-  String unmaskText(String text) {
-    return MaskTextInputFormatter(mask: _mask, filter: _maskFilter, initialText: text).getUnmaskedText();
-  }
-
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    final mask = _mask;
+    final mask = getMask();
 
     if (mask == null || mask.isEmpty == true) {
       _resultTextMasked = newValue.text;
@@ -186,7 +112,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
             if (_resultTextArray.length <= j ||
                 (mask[j] != resultPrefix[j] || (mask[j] == resultPrefix[j] && j == resultPrefix.length - 1))) {
               // _resultTextArray.removeRange(0, j);
-              _resultTextArray.removeRange(0, resultPrefix.length); // added
+              _resultTextArray.removeRange(0, resultPrefix.length);
               break;
             }
           }
@@ -276,23 +202,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
         isDirectional: newValue.selection.isDirectional,
       ),
     );
-  }
-
-  void _calcMaskLength() {
-    _maskLength = 0;
-    final mask = _mask;
-    if (mask != null) {
-      for (var i = 0; i < mask.length; i++) {
-        if (_maskChars.contains(mask[i])) {
-          _maskLength++;
-        }
-      }
-    }
-  }
-
-  void _updateFilter(Map<String, RegExp> filter) {
-    _maskFilter = filter;
-    _maskChars = _maskFilter?.keys.toList(growable: false) ?? [];
   }
 }
 
