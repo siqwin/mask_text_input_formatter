@@ -15,8 +15,12 @@ pubspec.lock
 .metadata
 *.iml
 analysis_options.yaml
-/example/android/
-/example/ios/
 /doc/
 /coverage/
 /.fvm/
+/example/android/
+/example/ios/
+/example/macos/
+/example/windows/
+/example/linux/
+/example/web/

@@ -18,16 +18,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
   final _TextMatcher _resultTextArray = _TextMatcher();
   String _resultTextMasked = "";
 
-  /// Create the [mask] formatter for TextField
-  ///
-  /// The keys of the [filter] assign which character in the mask should be replaced and the values validate the entered character
-  /// By default `#` match to the number and `A` to the letter
-  ///
-  /// Set [type] for autocompletion behavior:
-  ///  - [MaskAutoCompletionType.lazy] (default): autocomplete unfiltered characters once the following filtered character is input.
-  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1", then "1/2"
-  ///  - [MaskAutoCompletionType.eager]: autocomplete unfiltered characters when the previous filtered character is input.
-  ///  For example, with the mask "#/#" and the sequence of characters "1" then "2", the formatter will output "1/", then "1/2"
   MaskTextInputFormatter({
     String? mask,
     Map<String, RegExp>? filter,
@@ -185,8 +175,11 @@ class MaskTextInputFormatter implements TextInputFormatter {
           for (var j = 0; j < resultPrefix.length; j++) {
             if (_resultTextArray.length <= j ||
                 (mask[j] != resultPrefix[j] || (mask[j] == resultPrefix[j] && j == resultPrefix.length - 1))) {
-              // _resultTextArray.removeRange(0, j);
-              _resultTextArray.removeRange(0, resultPrefix.length); // added
+              if (_resultTextArray.length == mask.length) {
+                _resultTextArray.removeRange(0, resultPrefix.length);
+              } else {
+                _resultTextArray.removeRange(0, j);
+              }
               break;
             }
           }
@@ -210,9 +203,9 @@ class MaskTextInputFormatter implements TextInputFormatter {
       String? curTextChar;
       if (isMaskChar && curTextInRange) {
         while (curTextChar == null && curTextInRange) {
-          // final potentialTextChar = _resultTextArray[curTextPos];
-          final index = _resultTextArray.length == mask.length ? maskPos : curTextPos; // added
-          final potentialTextChar = _resultTextArray[index]; //  added
+          final potentialTextChar = _resultTextArray[curTextPos];
+          // final index = _resultTextArray.length == mask.length ? maskPos : curTextPos; // added
+          // final potentialTextChar = _resultTextArray[index]; //  added
           if (_maskFilter?[curMaskChar]?.hasMatch(potentialTextChar) ?? false) {
             curTextChar = potentialTextChar;
           } else {
