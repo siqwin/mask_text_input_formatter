@@ -1,0 +1,4 @@
+enum MaskAutoCompletionType {
+  lazy,
+  eager,
+}
