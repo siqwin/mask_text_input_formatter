@@ -7,6 +7,7 @@ part 'matcher.dart';
 
 class MaskTextInputFormatter implements TextInputFormatter {
   final MaskAutoCompletionType type;
+  
 
   final TextEditingValue Function(
     TextEditingValue oldValue,
