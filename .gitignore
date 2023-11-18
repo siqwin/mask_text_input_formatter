@@ -24,3 +24,5 @@ analysis_options.yaml
 /example/windows/
 /example/linux/
 /example/web/
+/example/.flutter-plugins
+/example/.flutter-plugins-dependencies
