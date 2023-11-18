@@ -137,7 +137,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
       return customFormatEditUpdate!(oldValue, newValue);
     }
 
-    if (mask == null || mask.isEmpty == true) {
+    if (mask == null || mask.isEmpty) {
       _resultTextMasked = newValue.text;
       _resultTextArray.set(newValue.text);
       return newValue;
