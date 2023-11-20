@@ -17,6 +17,8 @@ pubspec.lock
 analysis_options.yaml
 /example/android/
 /example/ios/
+/example/integration_test/
 /doc/
 /coverage/
 /.fvm/
+/private/

@@ -42,6 +42,18 @@ class MaskTextInputFormatter implements TextInputFormatter {
     );
   }
 
+  /// Create the eager [mask] formatter for TextField
+  MaskTextInputFormatter.eager({
+    String? mask,
+    Map<String, RegExp>? filter,
+    String? initialText,
+  }): this(
+    mask: mask,
+    filter: filter,
+    initialText: initialText,
+    type: MaskAutoCompletionType.eager
+  );
+
   /// Change the mask
   TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter, TextEditingValue? newValue}) {
     _mask = mask;
@@ -168,16 +180,25 @@ class MaskTextInputFormatter implements TextInputFormatter {
     }
 
     if (beforeResultTextLength == 0 && _resultTextArray.length  > 1) {
+      var prefixLength = 0;
       for (var i = 0; i < mask.length; i++) {
         if (_maskChars.contains(mask[i])) {
-          final resultPrefix = _resultTextArray._symbolArray.take(i).toList();
-          for (var j = 0; j < resultPrefix.length; j++) {
-            if (_resultTextArray.length <= j || (mask[j] != resultPrefix[j] || (mask[j] == resultPrefix[j] && j == resultPrefix.length - 1))) {
-              _resultTextArray.removeRange(0, j);
-              break;
-            }
-          }
+          prefixLength = i;
           break;
+        }
+      }
+      if (prefixLength > 0) {
+        final resultPrefix = _resultTextArray._symbolArray.take(prefixLength).toList();
+        final effectivePrefixLength = min(_resultTextArray.length, resultPrefix.length);
+        for (var j = 0; j < effectivePrefixLength; j++) {
+          if (mask[j] != resultPrefix[j]) {
+            _resultTextArray.removeRange(0, j);
+            break;
+          }
+          if (j == effectivePrefixLength - 1) {
+            _resultTextArray.removeRange(0, effectivePrefixLength);
+            break;
+          }
         }
       }
     }
@@ -187,6 +208,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
     _resultTextMasked = "";
     var cursorPos = -1;
     var nonMaskedCount = 0;
+    var maskInside = 0;
 
     while (maskPos < mask.length) {
       final curMaskChar = mask[maskPos];
@@ -196,6 +218,11 @@ class MaskTextInputFormatter implements TextInputFormatter {
 
       String? curTextChar;
       if (isMaskChar && curTextInRange) {
+        if (maskInside > 0) {
+          _resultTextArray.removeRange(curTextPos - maskInside, curTextPos);
+          curTextPos -= maskInside;
+        }
+        maskInside = 0;
         while (curTextChar == null && curTextInRange) {
           final potentialTextChar = _resultTextArray[curTextPos];
           if (_maskFilter?[curMaskChar]?.hasMatch(potentialTextChar) ?? false) {
@@ -228,6 +255,13 @@ class MaskTextInputFormatter implements TextInputFormatter {
           break;
         } else {
           _resultTextMasked += mask[maskPos];
+          if (!isMaskChar && curTextPos < _resultTextArray.length && curMaskChar == _resultTextArray[curTextPos]) {
+            maskInside++;
+            curTextPos++;
+          } else if (maskInside > 0) {
+            curTextPos -= maskInside;
+            maskInside = 0;
+          }
         }
 
         if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0 || currentResultSelectionLength > 0 || beforeReplaceLength > 0) {
@@ -291,8 +325,6 @@ class _TextMatcher {
       _symbolArray.insert(start + i, substring[i]);
     }
   }
-
-  bool get isEmpty => _symbolArray.isEmpty;
 
   void removeAt(int index) => _symbolArray.removeAt(index);
 

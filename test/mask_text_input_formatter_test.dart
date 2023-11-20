@@ -169,7 +169,7 @@ void main() {
       var currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "04321567890", selection: TextSelection.collapsed(offset: 11)));
       currentTextEditingValue = TextEditingValue(text: currentTextEditingValue.text, selection: const TextSelection(baseOffset: 4, extentOffset: 10));
       currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 10)));
-      expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 10)));
+      expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 12)));
       expect(maskTextInputFormatter.isFill(), true);
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
       expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
@@ -386,7 +386,26 @@ void main() {
       expect(eagerMaskTextInputFormatter.getMaskedText(), "1234");
     });
 
-  });
+    test('Paste masked text', () {
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "21#######-##")
+        ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "214095276-01", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter.getMaskedText(), "214095276-01");
 
+      final maskTextInputFormatter2 = MaskTextInputFormatter(mask: "#21#########")
+        ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "121409527601", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter2.getMaskedText(), "121409527601");
+
+      final maskTextInputFormatter3 = MaskTextInputFormatter(mask: "#21#########")
+        ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)))
+        ..formatEditUpdate(const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)), const TextEditingValue(text: "121409527601", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter3.getMaskedText(), "121409527601");
+
+      final maskTextInputFormatter4 = MaskTextInputFormatter(mask: "#21#########")
+        ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)))
+        ..formatEditUpdate(const TextEditingValue(text: "121", selection: TextSelection.collapsed(offset: 3)), const TextEditingValue(text: "121409527601", selection: TextSelection.collapsed(offset: 12)));
+      expect(maskTextInputFormatter4.getMaskedText(), "121409527601");
+    });
+
+  });
 
 }

@@ -1,3 +1,8 @@
+## [2.6.0]
+Fixed #82
+Removed deprecated lints
+Added "eager" mask type constructor for shortening
+
 ## [2.5.0]
 
 Fixed: #70
