@@ -1,3 +1,6 @@
+## [2.7.0]
+Fixed #86
+
 ## [2.6.0]
 Fixed #82
 Removed deprecated lints

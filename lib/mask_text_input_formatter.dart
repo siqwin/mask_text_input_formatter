@@ -252,7 +252,14 @@ class MaskTextInputFormatter implements TextInputFormatter {
         }
 
         if (!curTextInRange) {
-          break;
+          if (maskInside > 0) {
+            curTextPos -= maskInside;
+            maskInside = 0;
+            nonMaskedCount = 0;
+            continue;
+          } else {
+            break;
+          }
         } else {
           _resultTextMasked += mask[maskPos];
           if (!isMaskChar && curTextPos < _resultTextArray.length && curMaskChar == _resultTextArray[curTextPos]) {

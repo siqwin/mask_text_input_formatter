@@ -7,7 +7,7 @@ void main() {
 
   group("Mask Text Input Formatter Tests", () {
 
-    test('Type', () {
+    test('Typing 1', () {
       const phone = "01234567890";
       const expectResult = "+0 (123) 456-78-90";
 
@@ -18,6 +18,36 @@ void main() {
         expect(expectResult.startsWith(currentTextEditingValue.text), true);
         expect(maskTextInputFormatter.isFill(), i == phone.length - 1);
         expect(maskTextInputFormatter.getUnmaskedText(), phone.substring(0, i + 1));
+        expect(maskTextInputFormatter.getMaskedText(), currentTextEditingValue.text);
+      }
+    });
+
+    test('Typing 2', () {
+      const typing = "123";
+      const expectResult = "123123";
+
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "123###");
+      var currentTextEditingValue = TextEditingValue.empty;
+      for (var i = 0; i < typing.length; i++) {
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i]));
+        expect(expectResult.startsWith(currentTextEditingValue.text), true, reason: "$expectResult not starts with ${currentTextEditingValue.text}");
+        expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
+        expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
+        expect(maskTextInputFormatter.getMaskedText(), currentTextEditingValue.text);
+      }
+    });
+
+    test('Typing 3', () {
+      const typing = "321";
+      const expectResult = "123321321";
+
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "123###321");
+      var currentTextEditingValue = TextEditingValue.empty;
+      for (var i = 0; i < typing.length; i++) {
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i]));
+        expect(expectResult.startsWith(currentTextEditingValue.text), true, reason: "$expectResult not starts with ${currentTextEditingValue.text}");
+        expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
+        expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
         expect(maskTextInputFormatter.getMaskedText(), currentTextEditingValue.text);
       }
     });
