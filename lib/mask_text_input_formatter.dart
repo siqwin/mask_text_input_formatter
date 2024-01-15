@@ -9,7 +9,8 @@ enum MaskAutoCompletionType {
 
 class MaskTextInputFormatter implements TextInputFormatter {
 
-  final MaskAutoCompletionType type;
+  MaskAutoCompletionType _type;
+  MaskAutoCompletionType get type => _type;
 
   String? _mask;
   List<String> _maskChars = [];
@@ -33,8 +34,8 @@ class MaskTextInputFormatter implements TextInputFormatter {
     String? mask,
     Map<String, RegExp>? filter,
     String? initialText,
-    this.type = MaskAutoCompletionType.lazy,
-  }) {
+    MaskAutoCompletionType type = MaskAutoCompletionType.lazy,
+  }): _type = type {
     updateMask(
       mask: mask,
       filter: filter ?? {"#": RegExp('[0-9]'), "A": RegExp('[^0-9]')},
@@ -55,10 +56,13 @@ class MaskTextInputFormatter implements TextInputFormatter {
   );
 
   /// Change the mask
-  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter, TextEditingValue? newValue}) {
+  TextEditingValue updateMask({ String? mask, Map<String, RegExp>? filter, MaskAutoCompletionType? type, TextEditingValue? newValue}) {
     _mask = mask;
     if (filter != null) {
       _updateFilter(filter);
+    }
+    if (type != null) {
+      _type = type;
     }
     _calcMaskLength();
     TextEditingValue? targetValue = newValue;
@@ -247,10 +251,6 @@ class MaskTextInputFormatter implements TextInputFormatter {
         nonMaskedCount = 0;
         curTextPos += 1;
       } else {
-        if (curTextPos == targetCursorPosition && cursorPos == -1 && !curTextInRange) {
-          cursorPos = maskPos;
-        }
-
         if (!curTextInRange) {
           if (maskInside > 0) {
             curTextPos -= maskInside;
@@ -269,6 +269,10 @@ class MaskTextInputFormatter implements TextInputFormatter {
             curTextPos -= maskInside;
             maskInside = 0;
           }
+        }
+
+        if (curTextPos == targetCursorPosition && cursorPos == -1 && !curTextInRange) {
+          cursorPos = maskPos;
         }
 
         if (type == MaskAutoCompletionType.lazy || lengthRemoved > 0 || currentResultSelectionLength > 0 || beforeReplaceLength > 0) {

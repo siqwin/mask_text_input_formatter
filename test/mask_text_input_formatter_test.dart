@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -434,6 +435,44 @@ void main() {
         ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)))
         ..formatEditUpdate(const TextEditingValue(text: "121", selection: TextSelection.collapsed(offset: 3)), const TextEditingValue(text: "121409527601", selection: TextSelection.collapsed(offset: 12)));
       expect(maskTextInputFormatter4.getMaskedText(), "121409527601");
+    });
+
+    test('Update Mask Type', () {
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "123-###")
+        ..formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "321"));
+      expect(maskTextInputFormatter.getMaskedText(), "123-321");
+
+      maskTextInputFormatter.updateMask(mask: "###-555", type: MaskAutoCompletionType.eager);
+      expect(maskTextInputFormatter.getMaskedText(), "321-555");
+      expect(maskTextInputFormatter.getUnmaskedText(), "321");
+    });
+
+    test('Empty formatter', () {
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-####");
+
+      expect(maskTextInputFormatter.getMaskedText(), "");
+      expect(maskTextInputFormatter.getUnmaskedText(), "");
+
+      final resultEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, TextEditingValue.empty);
+      expect(resultEditingValue.text, "");
+      expect(maskTextInputFormatter.getMaskedText(), "");
+      expect(maskTextInputFormatter.getUnmaskedText(), "");
+    });
+
+    test('Cursor position', () {
+      var maskTextInputFormatter = MaskTextInputFormatter(mask: "+1 (###) ###-####");
+      var resultEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
+
+      expect(maskTextInputFormatter.getMaskedText(), "+1 (1");
+      expect(maskTextInputFormatter.getUnmaskedText(), "1");
+      expect(resultEditingValue.selection.baseOffset, 5);
+
+      maskTextInputFormatter = MaskTextInputFormatter.eager(mask: "+# (###) ###-####");
+      resultEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "1", selection: TextSelection.collapsed(offset: 1)));
+
+      expect(maskTextInputFormatter.getMaskedText(), "+1 (");
+      expect(maskTextInputFormatter.getUnmaskedText(), "1");
+      expect(resultEditingValue.selection.baseOffset, 4);
     });
 
   });
