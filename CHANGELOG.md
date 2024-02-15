@@ -1,3 +1,6 @@
+## [2.9.0]
+Fixed #92
+
 ## [2.8.0]
 Added: `type` parameter to `updateMask` method
 Fixed #88

@@ -15,7 +15,7 @@ void main() {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+# (###) ###-##-##");
       var currentTextEditingValue = TextEditingValue.empty;
       for (var i = 0; i < phone.length; i++) {
-        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + phone[i]));
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + phone[i], selection: TextSelection.collapsed(offset: currentTextEditingValue.text.length + 1)));
         expect(expectResult.startsWith(currentTextEditingValue.text), true);
         expect(maskTextInputFormatter.isFill(), i == phone.length - 1);
         expect(maskTextInputFormatter.getUnmaskedText(), phone.substring(0, i + 1));
@@ -30,7 +30,39 @@ void main() {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "123###");
       var currentTextEditingValue = TextEditingValue.empty;
       for (var i = 0; i < typing.length; i++) {
-        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i]));
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i], selection: TextSelection.collapsed(offset: currentTextEditingValue.text.length + 1)));
+        expect(expectResult.startsWith(currentTextEditingValue.text), true, reason: "$expectResult not starts with ${currentTextEditingValue.text}");
+        expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
+        expect(maskTextInputFormatter.getMaskedText(), currentTextEditingValue.text);
+        expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
+      }
+    });
+
+    test('Typing 4', () {
+      const mask = "0######";
+      const typing = "000000";
+      const expectResult = "0000000";
+
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: mask);
+      var currentTextEditingValue = const TextEditingValue(selection: TextSelection.collapsed(offset: 0));
+      for (var i = 0; i < typing.length; i++) {
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i], selection: TextSelection.collapsed(offset: currentTextEditingValue.text.length + 1)));
+        expect(expectResult.startsWith(currentTextEditingValue.text), true, reason: "$expectResult not starts with ${currentTextEditingValue.text}");
+        expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
+        expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
+        expect(maskTextInputFormatter.getMaskedText(), currentTextEditingValue.text);
+      }
+    });
+
+    test('Typing 5', () {
+      const mask = "###1###";
+      const typing = "111111";
+      const expectResult = "1111111";
+
+      final maskTextInputFormatter = MaskTextInputFormatter(mask: mask);
+      var currentTextEditingValue = const TextEditingValue(selection: TextSelection.collapsed(offset: 0));
+      for (var i = 0; i < typing.length; i++) {
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i], selection: TextSelection.collapsed(offset: currentTextEditingValue.text.length + 1)));
         expect(expectResult.startsWith(currentTextEditingValue.text), true, reason: "$expectResult not starts with ${currentTextEditingValue.text}");
         expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
         expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
@@ -45,11 +77,11 @@ void main() {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "123###321");
       var currentTextEditingValue = TextEditingValue.empty;
       for (var i = 0; i < typing.length; i++) {
-        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i]));
+        currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, TextEditingValue(text: currentTextEditingValue.text + typing[i], selection: TextSelection.collapsed(offset: currentTextEditingValue.text.length + 1)));
         expect(expectResult.startsWith(currentTextEditingValue.text), true, reason: "$expectResult not starts with ${currentTextEditingValue.text}");
-        expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
-        expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
         expect(maskTextInputFormatter.getMaskedText(), currentTextEditingValue.text);
+        expect(maskTextInputFormatter.getUnmaskedText(), typing.substring(0, i + 1));
+        expect(maskTextInputFormatter.isFill(), i == typing.length - 1);
       }
     });
 
@@ -199,8 +231,8 @@ void main() {
       final maskTextInputFormatter = MaskTextInputFormatter(mask: "+# (###) ###-##-##");
       var currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(TextEditingValue.empty, const TextEditingValue(text: "04321567890", selection: TextSelection.collapsed(offset: 11)));
       currentTextEditingValue = TextEditingValue(text: currentTextEditingValue.text, selection: const TextSelection(baseOffset: 4, extentOffset: 10));
-      currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 10)));
-      expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 12)));
+      currentTextEditingValue = maskTextInputFormatter.formatEditUpdate(currentTextEditingValue, const TextEditingValue(text: "+0 (123456-78-90", selection: TextSelection.collapsed(offset: 10)));
+      expect(currentTextEditingValue, const TextEditingValue(text: "+0 (123) 456-78-90", selection: TextSelection.collapsed(offset: 10)));
       expect(maskTextInputFormatter.isFill(), true);
       expect(maskTextInputFormatter.getUnmaskedText(), "01234567890");
       expect(maskTextInputFormatter.getMaskedText(), "+0 (123) 456-78-90");
