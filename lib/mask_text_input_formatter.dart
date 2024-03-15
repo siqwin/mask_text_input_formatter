@@ -115,9 +115,11 @@ class MaskTextInputFormatter implements TextInputFormatter {
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     final mask = _mask;
 
+    String newValueReplacement = _replacePersianNumber(newValue.text);
+
     if (mask == null || mask.isEmpty == true) {
-      _resultTextMasked = newValue.text;
-      _resultTextArray.set(newValue.text);
+      _resultTextMasked = newValueReplacement;
+      _resultTextArray.set(newValueReplacement);
       return newValue;
     }
 
@@ -126,7 +128,7 @@ class MaskTextInputFormatter implements TextInputFormatter {
     }
 
     final beforeText = oldValue.text;
-    final afterText = newValue.text;
+    final afterText = newValueReplacement;
 
     final beforeSelection = oldValue.selection;
     final afterSelection = newValue.selection;
@@ -307,6 +309,18 @@ class MaskTextInputFormatter implements TextInputFormatter {
       )
     );
   }
+
+  String _replacePersianNumber(String text) => text
+      .replaceAll('١', '1')
+      .replaceAll('٢', '2')
+      .replaceAll('٣', '3')
+      .replaceAll('٤', '4')
+      .replaceAll('٥', '5')
+      .replaceAll('٦', '6')
+      .replaceAll('٧', '7')
+      .replaceAll('٨', '8')
+      .replaceAll('٩', '9')
+      .replaceAll('٠', '0');
 
   void _calcMaskLength() {
     _maskLength = 0;
